@@ -1,7 +1,12 @@
-﻿internal class Program
+﻿using ProposalSender.Contracts.Implementations;
+using ProposalSender.Contracts.Interfaces;
+using ProposalSender.Test.Console;
+using TL;
+internal class Program
 {
-    private static void Main(string[] args)
+    static ISendTelegramMessages send = new SendTelegramMessages();
+    static async Task Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        new SendMessages(send);
     }
-}
+ }

@@ -7,4 +7,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="WTelegramClient" Version="3.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProposalSender.Contracts\ProposalSender.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>
