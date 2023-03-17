@@ -15,19 +15,7 @@ namespace ProposalSender.Contracts.Implementations
         #endregion
         public SendTelegramMessages()
         {
-            UserSender = new UserSender
-            {
-                PhoneNumber = 9393910200,
-                Name = "Артур",
-                LastName = "Сизов",
-                Password = "3355413",
-                ApiHash = "23398527f241060a3ac9da0fca3a68f8",
-                ApiId = "28077592"
-            };
-            //Phones.Add(9393921255);
-            client = new Client(Config);
-            //Task.Run(async () => await client.LoginUserIfNeeded());
-
+            //client = new Client(Config);
         }
 
         #region Methods
@@ -43,8 +31,7 @@ namespace ProposalSender.Contracts.Implementations
                 case "api_id": return $"{UserSender.ApiId}";
                 case "api_hash": return $"{UserSender.ApiHash}";
                 case "phone_number": return $"+7{UserSender.PhoneNumber}";
-                case "verification_code": Console.Write("Code: ");
-                    return Console.ReadLine();
+                case "verification_code": return $"{UserSender.VerificationCode}";
                 case "first_name": return $"{UserSender.Name}";      // if sign-up is required
                 case "last_name": return $"{UserSender.LastName}";        // if sign-up is required
                 case "password": return $"{UserSender.Password}";     // if user has enabled 2FA
@@ -57,7 +44,10 @@ namespace ProposalSender.Contracts.Implementations
         /// <param name="message"></param>
         public async Task  SendMessage(string message = "App Send Telegram Messages")
         {
+            client = new Client(Config);
+
             await client.LoginUserIfNeeded();
+
             foreach (var item in Phones)
             {
                 var result = await client.Contacts_ImportContacts(new[] { new InputPhoneContact { phone = $"+7{item}" } });

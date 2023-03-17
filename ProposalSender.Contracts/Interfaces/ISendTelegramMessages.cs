@@ -1,5 +1,4 @@
 ﻿using ProposalSender.Contracts.Models;
-using WTelegram;
 
 namespace ProposalSender.Contracts.Interfaces
 {
