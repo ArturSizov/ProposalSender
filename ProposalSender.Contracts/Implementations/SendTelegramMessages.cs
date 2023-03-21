@@ -7,46 +7,39 @@ namespace ProposalSender.Contracts.Implementations
 {
     public class SendTelegramMessages : ISendTelegramMessages
     {
-        private Client client;
-
         #region Public property
         public UserSender UserSender { get; set; } = new();
         public List<long> Phones { get; set; } = new();
+        public string LoginInfo { get; set; }
+        public string ErrorMessage { get; set; }
+        public bool VerificationView { get; set; }
         #endregion
-        public SendTelegramMessages()
-        {
-            //client = new Client(Config);
-        }
+
+        private Client? client; 
 
         #region Methods
-        /// <summary>
-        /// Configuration for WTelegram.Client
-        /// </summary>
-        /// <param name="what"></param>
-        /// <returns></returns>
-        private string? Config(string what)
+
+        public async Task Connect()
         {
-            switch (what)
-            {
-                case "api_id": return $"{UserSender.ApiId}";
-                case "api_hash": return $"{UserSender.ApiHash}";
-                case "phone_number": return $"+7{UserSender.PhoneNumber}";
-                case "verification_code": return $"{UserSender.VerificationCode}";
-                case "first_name": return $"{UserSender.Name}";      // if sign-up is required
-                case "last_name": return $"{UserSender.LastName}";        // if sign-up is required
-                case "password": return $"{UserSender.Password}";     // if user has enabled 2FA
-                default: return null;                  // let WTelegramClient decide the default config
-            }
+            client?.Dispose();
+
+            client = new Client(Convert.ToInt32(UserSender.ApiId), UserSender.ApiHash);
+
+            await DoLogin($"+7{UserSender.PhoneNumber}");
         }
+
+        public async Task SendCode()
+        {
+            await DoLogin(UserSender.VerificationCode);
+        }
+
         /// <summary>
         /// Message sending method
         /// </summary>
         /// <param name="message"></param>
-        public async Task  SendMessage(string message = "App Send Telegram Messages")
+        public async Task SendMessage(string message = "App Send Telegram Messages")
         {
-            client = new Client(Config);
-
-            await client.LoginUserIfNeeded();
+            await Connect();
 
             foreach (var item in Phones)
             {
@@ -55,6 +48,29 @@ namespace ProposalSender.Contracts.Implementations
             }
         }
 
+        public async Task DoLogin(string loginInfo) // (add this method to your code)
+        {
+            string what = await client.Login(loginInfo);
+
+            if (what != null)
+            {
+                VerificationView = true;
+
+                switch (what)
+                {
+                    case "verification_code":
+                        LoginInfo = "Код верификации:";
+                        break;
+                    case "password":
+                        LoginInfo = "Пароль аккаунта:";
+                        break;
+                    default:
+                        LoginInfo = null;
+                        break;
+                }
+
+            }
+        }
         #endregion
     }
 }

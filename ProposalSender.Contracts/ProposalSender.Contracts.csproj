@@ -10,4 +10,8 @@
     <PackageReference Include="WTelegramClient" Version="3.3.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ProposalSender.ASP\ProposalSender.ASP.csproj" />
+  </ItemGroup>
+
 </Project>

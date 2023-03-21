@@ -6,11 +6,98 @@
         mc:Ignorable="d"
         DataContext="{Binding Source={StaticResource Locator}, Path=TelegramSenderWindowViewModel, UpdateSourceTrigger=PropertyChanged}"
         Title="{Binding Title}" 
-        Height="450" 
-        Width="800" >
+        Height="550" 
+        Width="900">
 
     
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="110"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" 
+                BorderBrush="Silver" 
+                BorderThickness="1"  
+                CornerRadius="8,8,3,3" 
+                Margin="3">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Grid.Column="0" 
+                        Orientation="Horizontal"
+                        Margin="1,5,0,0">
+                    <StackPanel Orientation="Horizontal"
+                            Margin="5">
+                        <TextBlock Text="Номер отправителя:"/>
+                        <TextBox Text="{Binding User.PhoneNumber}"
+                                 Height="20"
+                                 VerticalAlignment="Top"
+                                 Margin="3,0,0,0"
+                                 Width="70"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal"
+                                Margin="5">
+                        <TextBlock Text="API Hash:"/>
+                        <TextBox Text="{Binding User.ApiHash}"
+                             Height="20"
+                             VerticalAlignment="Top"
+                             Margin="3,0,0,0"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="5">
+                        <TextBlock Text="API ID:"/>
+                        <TextBox Text="{Binding User.ApiId}"
+                                 Height="20"
+                                 VerticalAlignment="Top"
+                                 Margin="3,0,0,0"
+                                 Width="55"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal"
+                                Margin="5"
+                                 IsEnabled="{Binding VerificationView}">
+                        <TextBlock Text="{Binding LoginInfo}"/>
+                        <TextBox Text="{Binding User.VerificationCode}"
+                                 Height="20"
+                                 VerticalAlignment="Top"
+                                 Margin="3,0,0,0"
+                                 Width="70"
+                                 IsEnabled="{Binding VerificationView}"/>
+                    </StackPanel>
+                </StackPanel>
+                
+                <Button Grid.RowSpan="2"
+                        Content="Подключиться"
+                        Width="90"
+                        HorizontalAlignment="Right"
+                        Margin="0,1,5,0"
+                        Command="{Binding ConnectTelegram}"/>
+                <TextBlock Text="Ссылка на регистрацию..."  
+                           HorizontalAlignment="Right"
+                           Margin="10,0,10,0">
+                    <TextBlock.InputBindings>
+                        <MouseBinding Command="{Binding OpenLink}" MouseAction="LeftClick" />
+                    </TextBlock.InputBindings>
+                </TextBlock>
+            </StackPanel>
+        </Border>
+        <Border Grid.Row="1"
+                BorderBrush="Silver" 
+                BorderThickness="1"  
+                CornerRadius="8,8,3,3" 
+                Margin="3">
+            <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding Message}"
+                         Width="550"/>
+                <Button Content="Отправить"
+                        Width="70"
+                        Height="55"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Bottom"
+                        Command="{Binding SendMessage}"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>
