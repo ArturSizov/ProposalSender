@@ -40,11 +40,9 @@ namespace ProposalSender.WPF.ViewModels
 
             User = new UserSender
             {
-                PhoneNumber = 9393910200,
-                Name = "Артур",
-                LastName = "Сизов",
-                ApiHash = "23398527f241060a3ac9da0fca3a68f8",
-                ApiId = "28077592"
+                PhoneNumber = Properties.Settings.Default.PhoneNumber,
+                ApiHash = Properties.Settings.Default.ApiHash,
+                ApiId = Properties.Settings.Default.ApiId
             };
 
             Message = "Hello World!";
@@ -72,6 +70,7 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand SendMessage => new DelegateCommand(async() =>
         {
+            SaveProperties();
             if (!string.IsNullOrEmpty(Message))
             {
                 await send.Connect(User);
@@ -116,6 +115,14 @@ namespace ProposalSender.WPF.ViewModels
             if (LoginInfo != null)
                 VerificationView = Visibility.Visible;
             else VerificationView = Visibility.Collapsed;
+        }
+
+        private void SaveProperties()
+        {
+            Properties.Settings.Default.ApiHash = User.ApiHash;
+            Properties.Settings.Default.ApiId = User.ApiId;
+            Properties.Settings.Default.PhoneNumber = User.PhoneNumber;
+            Properties.Settings.Default.Save();
         }
         #endregion
     }

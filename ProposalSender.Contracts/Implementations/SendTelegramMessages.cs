@@ -42,8 +42,8 @@ namespace ProposalSender.Contracts.Implementations
 
         public async Task DoLogin(string loginInfo)
         {
-            string what = await client.Login(loginInfo);
-            string what1 = "password";
+            //string what = await client.Login(loginInfo);
+            string what = "verification_code";
 
             if (what != null)
             {
