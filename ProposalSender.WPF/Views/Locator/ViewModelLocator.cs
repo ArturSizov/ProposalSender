@@ -1,4 +1,5 @@
-﻿using ProposalSender.WPF.Infrastructure;
+﻿using ProposalSender.Contracts.Implementations;
+using ProposalSender.WPF.Infrastructure;
 using ProposalSender.WPF.ViewModels;
 using Unity;
 

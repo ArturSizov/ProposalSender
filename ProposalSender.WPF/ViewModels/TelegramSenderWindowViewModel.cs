@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Prism.Mvvm;
 using TL;
+using System.Windows.Documents;
+using System.Collections.ObjectModel;
 
 namespace ProposalSender.WPF.ViewModels
 {
@@ -14,27 +16,29 @@ namespace ProposalSender.WPF.ViewModels
     {
         #region Private property
         private readonly ISendTelegramMessages send;
-        private bool verificationView = false;
+        private Visibility verificationView = Visibility.Collapsed;
         private string message;
         private string loginInfo;
         #endregion
 
         #region Public property
         public string Title => "Рассылатель сообщений в Телеграм";
+        public ObservableCollection<long> Phones { get; set; } = new();
 
         public UserSender User { get; set; } = new();
 
         public string Message { get => message; set => SetProperty(ref message, value); }
         public string LoginInfo { get => loginInfo; set => SetProperty(ref loginInfo, value); }
-        public bool VerificationView { get => verificationView; set => SetProperty(ref verificationView, value); }
+        public Visibility VerificationView { get => verificationView; set => SetProperty(ref verificationView, value); }
+       
         #endregion
         public TelegramSenderWindowViewModel(ISendTelegramMessages send)
         {
             this.send = send;
 
-            send.Phones.Add(9393921255);
+            Phones.Add(9393921255);
 
-            send.UserSender = new UserSender
+            User = new UserSender
             {
                 PhoneNumber = 9393910200,
                 Name = "Артур",
@@ -43,8 +47,7 @@ namespace ProposalSender.WPF.ViewModels
                 ApiId = "28077592"
             };
 
-            User = send.UserSender;
-
+            Message = "Hello World!";
         }
 
         #region Commands
@@ -61,24 +64,20 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand ConnectTelegram => new DelegateCommand(() =>
         {
-            send.SendCode();
-
-            Message = send.LoginInfo;
-
-            VerificationView = send.VerificationView;
-
-            LoginInfo = send.LoginInfo;
-
-            if (send.ErrorMessage != null)
-                MessageBox.Show($"{send.ErrorMessage}"); 
+            send.SendCode(User); 
         });
 
         /// <summary>
         /// Send Message command
         /// </summary>
-        public ICommand SendMessage => new DelegateCommand(() =>
+        public ICommand SendMessage => new DelegateCommand(async() =>
         {
-            if(!string.IsNullOrEmpty(Message)) send.SendMessage(Message);
+            if (!string.IsNullOrEmpty(Message))
+            {
+                await send.Connect(User);
+                //await send.SendMessage(Phones, Message);
+                SetProperties();
+            }
         });
         #endregion
 
@@ -109,7 +108,15 @@ namespace ProposalSender.WPF.ViewModels
                     throw;
                 }
             }
-            #endregion
         }
+
+        private void SetProperties()
+        {
+            LoginInfo = send.LoginInfo;
+            if (LoginInfo != null)
+                VerificationView = Visibility.Visible;
+            else VerificationView = Visibility.Collapsed;
+        }
+        #endregion
     }
 }

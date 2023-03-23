@@ -7,55 +7,46 @@ namespace ProposalSender.Contracts.Implementations
 {
     public class SendTelegramMessages : ISendTelegramMessages
     {
-        #region Public property
-        public UserSender UserSender { get; set; } = new();
-        public List<long> Phones { get; set; } = new();
-        public string LoginInfo { get; set; }
-        public string ErrorMessage { get; set; }
-        public bool VerificationView { get; set; }
+        #region Private proprty
+        private Client? client;
         #endregion
 
-        private Client? client; 
-
+        public string LoginInfo { get; set; }
         #region Methods
-
-        public async Task Connect()
+        public async Task Connect(UserSender user)
         {
             client?.Dispose();
 
-            client = new Client(Convert.ToInt32(UserSender.ApiId), UserSender.ApiHash);
+            client = new Client(Convert.ToInt32(user.ApiId), user.ApiHash);
 
-            await DoLogin($"+7{UserSender.PhoneNumber}");
+            await DoLogin($"+7{user.PhoneNumber}");
         }
 
-        public async Task SendCode()
+        public async Task SendCode(UserSender user)
         {
-            await DoLogin(UserSender.VerificationCode);
+            await DoLogin(user.VerificationCode);
         }
 
         /// <summary>
         /// Message sending method
         /// </summary>
         /// <param name="message"></param>
-        public async Task SendMessage(string message = "App Send Telegram Messages")
+        public async Task SendMessage(IEnumerable<long>users, string message = "App Send Telegram Messages")
         {
-            await Connect();
-
-            foreach (var item in Phones)
+            foreach (var item in users)
             {
                 var result = await client.Contacts_ImportContacts(new[] { new InputPhoneContact { phone = $"+7{item}" } });
                 await client.SendMessageAsync(result.users[result.imported[0].user_id], $"{message}");
             }
         }
 
-        public async Task DoLogin(string loginInfo) // (add this method to your code)
+        public async Task DoLogin(string loginInfo)
         {
             string what = await client.Login(loginInfo);
+            string what1 = "password";
 
             if (what != null)
             {
-                VerificationView = true;
-
                 switch (what)
                 {
                     case "verification_code":
@@ -68,7 +59,6 @@ namespace ProposalSender.Contracts.Implementations
                         LoginInfo = null;
                         break;
                 }
-
             }
         }
         #endregion
