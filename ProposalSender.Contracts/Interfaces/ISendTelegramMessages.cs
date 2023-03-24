@@ -6,7 +6,10 @@ namespace ProposalSender.Contracts.Interfaces
     {
         Task Connect(UserSender user, string verificationValue);
         Task SendMessage(IEnumerable<long> users, string message = "App Send Telegram Messages");
-        string Status { get; set; }
+        void Disconnect();
         string LoginInfo { get; set; }
+        string Status { get; set; }
+        public bool IsEnabled { get; set; }
+        string ErrorMessage { get; set; }
     }
 }

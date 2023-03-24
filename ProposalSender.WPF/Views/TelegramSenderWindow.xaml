@@ -94,7 +94,23 @@
 
         <TextBlock Text="{Binding Status}"
                    HorizontalAlignment="Right"
-                   Margin="0,15,25,0"/>
+                   Margin="0,10,25,0"/>
+        <Button Content="Отключиться"
+                Height="25"
+                Width="95"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Margin="0,0,125,0"
+                Visibility="Visible"
+                Command="{Binding Disconnect}"/>
+        <Button Content="Подключиться"
+                Height="25"
+                Width="100"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Stretch"
+                Margin="0,0,25,0"
+                Visibility="Visible"
+                Command="{Binding Connect}"/>
 
         <Border Grid.Row="1"
                 BorderBrush="Silver" 
@@ -117,6 +133,6 @@
                 VerticalAlignment="Bottom"
                 Margin="0,0,35,15"
                 Command="{Binding SendMessage}"
-                CommandParameter="{Binding ElementName=Message,Path=Text}"/>
+                CommandParameter="{Binding ElementName=Message, Path=Text}"/>
     </Grid>
 </Window>

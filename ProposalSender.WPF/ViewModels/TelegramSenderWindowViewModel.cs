@@ -6,10 +6,7 @@ using System.Windows;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Prism.Mvvm;
-using TL;
-using System.Windows.Documents;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace ProposalSender.WPF.ViewModels
 {
@@ -18,22 +15,22 @@ namespace ProposalSender.WPF.ViewModels
         #region Private property
         private readonly ISendTelegramMessages send;
         private Visibility verificationView = Visibility.Collapsed;
-        private string message;
+        private string message = "Введите текст сообщения...";
         private string loginInfo;
         private string verificationValue;
-        private string status = "Не подключено";
+        private string status;
+        private string errorMessage;
         #endregion
 
         #region Public property
         public string Title => "Рассылатель в Telegram";
         public ObservableCollection<long> Phones { get; set; } = new();
-
         public UserSender User { get; set; } = new();
-
         public string Message { get => message; set => SetProperty(ref message, value); }
         public string VerificationValue { get => verificationValue; set => SetProperty(ref verificationValue, value); }
         public string LoginInfo { get => loginInfo; set => SetProperty(ref loginInfo, value); }
         public string Status { get => status; set => SetProperty(ref status, value); }
+        public string ErrorMessage { get => errorMessage; set => SetProperty(ref errorMessage, value); }
         public Visibility VerificationView { get => verificationView; set => SetProperty(ref verificationView, value); }
        
         #endregion
@@ -50,14 +47,22 @@ namespace ProposalSender.WPF.ViewModels
                 ApiId = Properties.Settings.Default.ApiId
             };
 
-            Message = "Введите текст сообщения...";
-
-            send.Connect(User, $"+7{User.PhoneNumber}");
-
-            Status = send.Status;
+            Status = "Не подключено";
         }
 
         #region Commands
+        public ICommand Connect => new DelegateCommand<string>(async(str) =>
+        {
+            await send.Connect(User, $"+7{User.PhoneNumber}");
+            SetProperties();
+            SaveProperties();
+        });
+
+        public ICommand Disconnect => new DelegateCommand(() =>
+        {
+            send.Disconnect();
+            SetProperties();
+        });
         /// <summary>
         /// Open link in browser command
         /// </summary>
@@ -69,9 +74,9 @@ namespace ProposalSender.WPF.ViewModels
         /// <summary>
         /// Connect to Telegramm command
         /// </summary>
-        public ICommand ConnectTelegram => new DelegateCommand<string>((str) =>
+        public ICommand ConnectTelegram => new DelegateCommand<string>(async(str) =>
         {
-            send.Connect(User, VerificationValue);
+            await send.Connect(User, VerificationValue);
             SetProperties();
             VerificationValue = null;
 
@@ -82,15 +87,13 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand SendMessage => new DelegateCommand<string>(async(str) =>
         {
-            await send.Connect(User, $"+7{User.PhoneNumber}");
-            //await send.SendMessage(Phones, Message);
-            SetProperties();
-            SaveProperties();
+            await send.SendMessage(Phones, Message);
 
         },(str)=> !string.IsNullOrWhiteSpace(str) );
         #endregion
 
         #region Methods
+        
         private void OpenUrl(string url)
         {
             try
@@ -121,10 +124,19 @@ namespace ProposalSender.WPF.ViewModels
 
         private void SetProperties()
         {
-            LoginInfo = send.LoginInfo;
-            if (LoginInfo != null)
+           Status = send.Status;
+
+           LoginInfo = send.LoginInfo;
+
+           if (LoginInfo != null)
                 VerificationView = Visibility.Visible;
-            else VerificationView = Visibility.Collapsed;
+           else VerificationView = Visibility.Collapsed;
+
+            if (send.ErrorMessage != null)
+            {
+                MessageBox.Show(send.ErrorMessage, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
+                send.ErrorMessage = null;
+            }
         }
 
         private void SaveProperties()
