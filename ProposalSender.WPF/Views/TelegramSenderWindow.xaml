@@ -22,8 +22,8 @@
                 Margin="3">
             <StackPanel Orientation="Vertical">
                 <StackPanel Grid.Column="0" 
-                        Orientation="Horizontal"
-                        Margin="1,5,0,0">
+                            Orientation="Horizontal"
+                            Margin="1,5,0,0">
                     <StackPanel Orientation="Horizontal"
                             Margin="5">
                         <TextBlock Text="Номер отправителя: +7"/>
@@ -31,7 +31,8 @@
                                  Height="20"
                                  VerticalAlignment="Top"
                                  Width="80" 
-                                 BorderThickness="0,0,0,1"/>
+                                 BorderThickness="0,0,0,1"
+                                 IsReadOnly="{Binding IsEnabled}"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -43,7 +44,8 @@
                                  Height="20"
                                  VerticalAlignment="Top"
                                  Margin="3,0,0,0"
-                                 BorderThickness="0,0,0,1"/>
+                                 BorderThickness="0,0,0,1"
+                                 IsReadOnly="{Binding IsEnabled}"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal"
@@ -54,7 +56,8 @@
                                  VerticalAlignment="Top"
                                  Margin="3,0,0,0"
                                  Width="65"
-                                 BorderThickness="0,0,0,1"/>
+                                 BorderThickness="0,0,0,1"
+                                 IsReadOnly="{Binding IsEnabled}"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Horizontal"
@@ -75,7 +78,7 @@
                                 VerticalAlignment="Bottom"
                                 Margin="10,0,0,0"
                                 VerticalContentAlignment="Center"
-                                Command="{Binding ConnectTelegram}"
+                                Command="{Binding SendCode}"
                                 CommandParameter="{Binding ElementName=Verification, Path=Text}"/>
                     </StackPanel>
                 </StackPanel>
@@ -109,7 +112,7 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
                 Margin="0,0,25,0"
-                Visibility="Visible"
+                Visibility="{Binding VerificationView}"
                 Command="{Binding Connect}"/>
 
         <Border Grid.Row="1"
@@ -123,7 +126,8 @@
                      VerticalScrollBarVisibility="Visible"
                      AcceptsReturn="True"
                      Margin="5"
-                     BorderThickness="0"/>
+                     BorderThickness="0" 
+                     IsEnabled="{Binding IsEnabled}"/>
         </Border>
         <Button Grid.Row="1"
                 Content="Отправить"

@@ -18,8 +18,9 @@ namespace ProposalSender.WPF.ViewModels
         private string message = "Введите текст сообщения...";
         private string loginInfo;
         private string verificationValue;
-        private string status;
+        private string status = "Не подключено";
         private string errorMessage;
+        private bool isEnabled = false;
         #endregion
 
         #region Public property
@@ -31,6 +32,7 @@ namespace ProposalSender.WPF.ViewModels
         public string LoginInfo { get => loginInfo; set => SetProperty(ref loginInfo, value); }
         public string Status { get => status; set => SetProperty(ref status, value); }
         public string ErrorMessage { get => errorMessage; set => SetProperty(ref errorMessage, value); }
+        public bool IsEnabled { get => isEnabled; set => SetProperty(ref isEnabled, value); }
         public Visibility VerificationView { get => verificationView; set => SetProperty(ref verificationView, value); }
        
         #endregion
@@ -45,9 +47,7 @@ namespace ProposalSender.WPF.ViewModels
                 PhoneNumber = Properties.Settings.Default.PhoneNumber,
                 ApiHash = Properties.Settings.Default.ApiHash,
                 ApiId = Properties.Settings.Default.ApiId
-            };
-
-            Status = "Не подключено";
+            }; 
         }
 
         #region Commands
@@ -74,7 +74,7 @@ namespace ProposalSender.WPF.ViewModels
         /// <summary>
         /// Connect to Telegramm command
         /// </summary>
-        public ICommand ConnectTelegram => new DelegateCommand<string>(async(str) =>
+        public ICommand SendCode => new DelegateCommand<string>(async(str) =>
         {
             await send.Connect(User, VerificationValue);
             SetProperties();
@@ -89,7 +89,7 @@ namespace ProposalSender.WPF.ViewModels
         {
             await send.SendMessage(Phones, Message);
 
-        },(str)=> !string.IsNullOrWhiteSpace(str) );
+        },(str)=> !string.IsNullOrWhiteSpace(str) & IsEnabled);
         #endregion
 
         #region Methods
@@ -127,6 +127,8 @@ namespace ProposalSender.WPF.ViewModels
            Status = send.Status;
 
            LoginInfo = send.LoginInfo;
+
+           IsEnabled = send.IsEnabled;
 
            if (LoginInfo != null)
                 VerificationView = Visibility.Visible;

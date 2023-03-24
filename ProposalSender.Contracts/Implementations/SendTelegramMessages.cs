@@ -11,10 +11,12 @@ namespace ProposalSender.Contracts.Implementations
         private Client? client;
         #endregion
 
+        #region Public property
         public string LoginInfo { get; set; }
         public string Status { get; set; }
         public string ErrorMessage { get; set; }
         public bool IsEnabled { get; set; }
+        #endregion
 
         #region Methods
         public async Task Connect(UserSender user, string verificationValue)
@@ -22,8 +24,10 @@ namespace ProposalSender.Contracts.Implementations
             try
             {
                 if (client == null)
+                {
                     client = new Client(Convert.ToInt32(user.ApiId), user.ApiHash);
-
+                    IsEnabled = true;
+                }
                 await DoLogin(verificationValue);
             }
             catch
@@ -37,6 +41,7 @@ namespace ProposalSender.Contracts.Implementations
             if (client != null)
             {
                 client.Reset(true, true);
+                IsEnabled = false;
                 Status = "Не подключено";
             }
                 
@@ -97,6 +102,7 @@ namespace ProposalSender.Contracts.Implementations
                 {
                     LoginInfo = null;
                     Status = $"Подключено как {client.User}";
+                    IsEnabled = true;
                 }
             }
             catch (Exception ex)
