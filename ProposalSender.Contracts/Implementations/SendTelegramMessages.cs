@@ -1,5 +1,6 @@
 ﻿using ProposalSender.Contracts.Interfaces;
 using ProposalSender.Contracts.Models;
+using System.Diagnostics.SymbolStore;
 using TL;
 using WTelegram;
 
@@ -12,19 +13,23 @@ namespace ProposalSender.Contracts.Implementations
         #endregion
 
         public string LoginInfo { get; set; }
+        public string Status { get; set; }
+
         #region Methods
-        public async Task Connect(UserSender user)
+        public async Task Connect(UserSender user, string verificationValue)
         {
-            client?.Dispose();
+            //client?.Dispose();
 
-            client = new Client(Convert.ToInt32(user.ApiId), user.ApiHash);
+            if(client == null)
+                client = new Client(Convert.ToInt32(user.ApiId), user.ApiHash);
 
-            await DoLogin($"+7{user.PhoneNumber}");
+            await DoLogin(verificationValue);
         }
 
-        public async Task SendCode(UserSender user)
+        
+        public async Task SendCode(string verificationValue)
         {
-            await DoLogin(user.VerificationCode);
+            await DoLogin(verificationValue);
         }
 
         /// <summary>
@@ -40,10 +45,11 @@ namespace ProposalSender.Contracts.Implementations
             }
         }
 
-        public async Task DoLogin(string loginInfo)
+        private async Task DoLogin(string loginInfo)
         {
-            //string what = await client.Login(loginInfo);
-            string what = "verification_code";
+            string what = await client.Login(loginInfo);
+
+            //var what = "verification_code";
 
             if (what != null)
             {
@@ -59,6 +65,11 @@ namespace ProposalSender.Contracts.Implementations
                         LoginInfo = null;
                         break;
                 }
+            }
+            else
+            {
+                LoginInfo = null;
+                Status = $"Подключено как клиент: {client.User}";
             }
         }
         #endregion

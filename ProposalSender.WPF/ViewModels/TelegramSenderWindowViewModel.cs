@@ -9,6 +9,7 @@ using Prism.Mvvm;
 using TL;
 using System.Windows.Documents;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace ProposalSender.WPF.ViewModels
 {
@@ -19,16 +20,20 @@ namespace ProposalSender.WPF.ViewModels
         private Visibility verificationView = Visibility.Collapsed;
         private string message;
         private string loginInfo;
+        private string verificationValue;
+        private string status = "Не подключено";
         #endregion
 
         #region Public property
-        public string Title => "Рассылатель сообщений в Телеграм";
+        public string Title => "Рассылатель в Telegram";
         public ObservableCollection<long> Phones { get; set; } = new();
 
         public UserSender User { get; set; } = new();
 
         public string Message { get => message; set => SetProperty(ref message, value); }
+        public string VerificationValue { get => verificationValue; set => SetProperty(ref verificationValue, value); }
         public string LoginInfo { get => loginInfo; set => SetProperty(ref loginInfo, value); }
+        public string Status { get => status; set => SetProperty(ref status, value); }
         public Visibility VerificationView { get => verificationView; set => SetProperty(ref verificationView, value); }
        
         #endregion
@@ -45,7 +50,11 @@ namespace ProposalSender.WPF.ViewModels
                 ApiId = Properties.Settings.Default.ApiId
             };
 
-            Message = "Hello World!";
+            Message = "Введите текст сообщения...";
+
+            send.Connect(User, $"+7{User.PhoneNumber}");
+
+            Status = send.Status;
         }
 
         #region Commands
@@ -60,24 +69,25 @@ namespace ProposalSender.WPF.ViewModels
         /// <summary>
         /// Connect to Telegramm command
         /// </summary>
-        public ICommand ConnectTelegram => new DelegateCommand(() =>
+        public ICommand ConnectTelegram => new DelegateCommand<string>((str) =>
         {
-            send.SendCode(User); 
-        });
+            send.Connect(User, VerificationValue);
+            SetProperties();
+            VerificationValue = null;
+
+        },(str)=> !string.IsNullOrWhiteSpace(str));
 
         /// <summary>
         /// Send Message command
         /// </summary>
-        public ICommand SendMessage => new DelegateCommand(async() =>
+        public ICommand SendMessage => new DelegateCommand<string>(async(str) =>
         {
+            await send.Connect(User, $"+7{User.PhoneNumber}");
+            //await send.SendMessage(Phones, Message);
+            SetProperties();
             SaveProperties();
-            if (!string.IsNullOrEmpty(Message))
-            {
-                await send.Connect(User);
-                //await send.SendMessage(Phones, Message);
-                SetProperties();
-            }
-        });
+
+        },(str)=> !string.IsNullOrWhiteSpace(str) );
         #endregion
 
         #region Methods
