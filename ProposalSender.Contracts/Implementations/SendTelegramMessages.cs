@@ -42,7 +42,7 @@ namespace ProposalSender.Contracts.Implementations
             {
                 client.Reset(true, true);
                 IsEnabled = false;
-                Status = "Не подключено";
+                Status = string.Empty;
             }
                 
         }
@@ -81,10 +81,10 @@ namespace ProposalSender.Contracts.Implementations
             {
                 string what = await client.Login(loginInfo);
 
+                //var what = "verification_code";
+
                 if (what != null)
                 {
-                    Status = "Не подключено";
-
                     switch (what)
                     {
                         case "verification_code":
@@ -94,13 +94,13 @@ namespace ProposalSender.Contracts.Implementations
                             LoginInfo = "Пароль аккаунта:";
                             break;
                         default:
-                            LoginInfo = null;
+                            LoginInfo = string.Empty;
                             break;
                     }
                 }
                 else
                 {
-                    LoginInfo = null;
+                    LoginInfo = string.Empty;
                     Status = $"Подключено как {client.User}";
                     IsEnabled = true;
                 }
@@ -111,6 +111,9 @@ namespace ProposalSender.Contracts.Implementations
                 {
                     case "API_ID_INVALID":
                         ErrorMessage = "Не верный API ID";
+                        break;
+                    case "PHONE_CODE_INVALID":
+                        ErrorMessage = "Не верный код верификации";
                         break;
                     case "FLOOD_WAIT_X":
                         ErrorMessage = "Аккаунт временно заблокирован";
@@ -125,9 +128,10 @@ namespace ProposalSender.Contracts.Implementations
                         ErrorMessage = ex.Message;
                         break;
                 }
-                client.Dispose();
+                client?.Dispose();
                 client = null;
-                Status = "Не подключено";
+                Status = string.Empty;
+                IsEnabled = false;
             }
 
         }

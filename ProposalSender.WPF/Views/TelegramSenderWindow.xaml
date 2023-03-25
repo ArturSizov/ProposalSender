@@ -3,12 +3,18 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converter="clr-namespace:ProposalSender.WPF.Services.Converters"
         mc:Ignorable="d"
         DataContext="{Binding Source={StaticResource Locator}, Path=TelegramSenderWindowViewModel, UpdateSourceTrigger=PropertyChanged}"
         Title="{Binding Title}" 
         Height="650" 
         Width="1020" 
         FontSize="14">
+    
+    <Window.Resources>
+        <converter:ButtonConnectVisibilityConverter x:Key="ButtonConnectVisibilityConverter"/>
+        <converter:ButtonDisconnectVisibilityConverter x:Key="ButtonDisconnectVisibilityConverter"/>
+    </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -71,9 +77,10 @@
                                  Margin="3,0,0,0"
                                  Width="80"/>
                         <Button Content="Подключиться"
+                                Background="LimeGreen"
                                 Visibility="{Binding VerificationView}"
                                 Width="100"
-                                Height="22"
+                                Height="25"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 Margin="10,0,0,0"
@@ -85,10 +92,11 @@
             </StackPanel>
         </Border>
         <TextBlock Text="Ссылка на регистрацию..."
-                   Foreground="GreenYellow"
+                   Foreground="Green"
                    HorizontalAlignment="Right"
-                   Margin="0,55,10,0" 
-                   FontSize="15">
+                   Margin="0,55,140,0" 
+                   FontSize="15"
+                   Visibility="{Binding IsEnabled, Converter={StaticResource ButtonConnectVisibilityConverter}}">
             <TextBlock.InputBindings>
                 <MouseBinding Command="{Binding OpenLink}" 
                               MouseAction="LeftClick" />
@@ -99,20 +107,29 @@
                    HorizontalAlignment="Right"
                    Margin="0,10,25,0"/>
         <Button Content="Отключиться"
-                Height="25"
-                Width="95"
+                Background="Red"
+                Height="35"
+                Width="110"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
-                Margin="0,0,125,0"
-                Visibility="Visible"
-                Command="{Binding Disconnect}"/>
+                Margin="0,20,25,0"
+                Command="{Binding Disconnect}">
+            <Button.Visibility>
+                <MultiBinding Converter="{StaticResource ButtonDisconnectVisibilityConverter}">
+                    <Binding Path="IsEnabled"/>
+                    <Binding Path="VerificationView"/>
+                </MultiBinding>
+            </Button.Visibility>
+        </Button>
         <Button Content="Подключиться"
-                Height="25"
-                Width="100"
+                Background="LimeGreen"
+                Height="65"
+                Width="120"
+                FontSize="15"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Stretch"
-                Margin="0,0,25,0"
-                Visibility="{Binding VerificationView}"
+                Margin="0,0,10,0"
+                Visibility="{Binding IsEnabled, Converter={StaticResource ButtonConnectVisibilityConverter}}"
                 Command="{Binding Connect}"/>
 
         <Border Grid.Row="1"

@@ -18,7 +18,7 @@ namespace ProposalSender.WPF.ViewModels
         private string message = "Введите текст сообщения...";
         private string loginInfo;
         private string verificationValue;
-        private string status = "Не подключено";
+        private string status;
         private string errorMessage;
         private bool isEnabled = false;
         #endregion
@@ -47,7 +47,9 @@ namespace ProposalSender.WPF.ViewModels
                 PhoneNumber = Properties.Settings.Default.PhoneNumber,
                 ApiHash = Properties.Settings.Default.ApiHash,
                 ApiId = Properties.Settings.Default.ApiId
-            }; 
+            };
+
+            //Connect.Execute(null);
         }
 
         #region Commands
@@ -78,7 +80,7 @@ namespace ProposalSender.WPF.ViewModels
         {
             await send.Connect(User, VerificationValue);
             SetProperties();
-            VerificationValue = null;
+            VerificationValue = string.Empty;
 
         },(str)=> !string.IsNullOrWhiteSpace(str));
 
@@ -137,7 +139,7 @@ namespace ProposalSender.WPF.ViewModels
             if (send.ErrorMessage != null)
             {
                 MessageBox.Show(send.ErrorMessage, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
-                send.ErrorMessage = null;
+                send.ErrorMessage = string.Empty;
             }
         }
 
