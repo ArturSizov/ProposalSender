@@ -132,7 +132,7 @@ namespace ProposalSender.WPF.ViewModels
 
            IsEnabled = send.IsEnabled;
 
-           if (LoginInfo != null)
+           if (LoginInfo != string.Empty)
                 VerificationView = Visibility.Visible;
            else VerificationView = Visibility.Collapsed;
 

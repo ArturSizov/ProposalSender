@@ -21,8 +21,8 @@ namespace ProposalSender.WPF
         private void ConfigureIOC()
         {
             RootContainer.Container.RegisterSingleton<TelegramSenderWindowViewModel, TelegramSenderWindowViewModel>();
-
             RootContainer.Container.RegisterSingleton<ISendTelegramMessages, SendTelegramMessages>();
+            RootContainer.Container.RegisterSingleton<IExelManager, ExelManager>();
         }
     }
 }
