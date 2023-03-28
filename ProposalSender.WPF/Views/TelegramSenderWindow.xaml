@@ -20,8 +20,7 @@
     <Grid>
         <TabControl Margin="1">
             <TabItem 
-                Header="Message"
-                Background="Red">
+                Header="Отправка сообщений">
                 <TabItem.Content>
                     <Grid>
                         <Grid.RowDefinitions>
@@ -76,7 +75,8 @@
 
                                     <StackPanel Orientation="Horizontal"
                                                 Margin="5">
-                                        <TextBlock Text="{Binding LoginInfo}"/>
+                                        <TextBlock Text="{Binding LoginInfo}"
+                                                   Visibility="{Binding VerificationView}"/>
                                         <TextBox x:Name="Verification"
                                                  Text="{Binding VerificationValue}"
                                                  Height="20"
@@ -102,8 +102,8 @@
                         <TextBlock Text="Ссылка на регистрацию..."
                                    Foreground="Green"
                                    HorizontalAlignment="Right"
-                                   Margin="0,55,140,0" 
-                                   FontSize="15"
+                                   Margin="0,65,130,0" 
+                                   FontSize="13"
                                    Visibility="{Binding IsEnabled, Converter={StaticResource ButtonConnectVisibilityConverter}}">
                             <TextBlock.InputBindings>
                                 <MouseBinding Command="{Binding OpenLink}" 
@@ -166,9 +166,67 @@
                     </Grid>
                 </TabItem.Content>
             </TabItem>
-            <TabItem Header="Items">
+            <TabItem Header="Список телефонов"
+                     IsEnabled="{Binding IsEnabled}">
                 <TabItem.Content>
-                    <TextBlock Text="3355413"/>
+                    <Grid>
+                        <Border BorderBrush="Silver" 
+                                BorderThickness="1"  
+                                CornerRadius="8,8,3,3" 
+                                Margin="3">
+                            <ListBox Margin="5" 
+                                     ItemsSource="{Binding Phones}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding StringFormat=+7{0}}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                            <Button Content="Удалить"
+                                                    Margin="10,0,0,0"
+                                                    Height="30"
+                                                    Width="65"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                                <ListBox.Style>
+                                    <Style  TargetType="ListBox" BasedOn="{StaticResource {x:Type ListBox}}">
+                                        <Style.Triggers>
+                                            <Trigger Property="HasItems" Value="False">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate>
+                                                            <TextBlock Text="Список пуст. Начните работу с добавления номера телефона."
+                                                                       HorizontalAlignment="Center"
+                                                                       VerticalAlignment="Center"/> 
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ListBox.Style>
+                            </ListBox>
+                        </Border>
+                        <StackPanel Orientation="Horizontal"
+                                    VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Right"
+                                    Margin="20">
+                            <Button Content="Добавить список"
+                                    Width="120"
+                                    Height="30"
+                                    Margin="5"/>
+                            <Button Content="Добавить номер"
+                                    Width="120"
+                                    Height="30"
+                                    Margin="5"/>
+                            <Button Content="Удалить все"
+                                    Width="120"
+                                    Height="30"
+                                    Margin="5"/>
+                        </StackPanel>
+                        
+                    </Grid>
                 </TabItem.Content>
             </TabItem>
         </TabControl>

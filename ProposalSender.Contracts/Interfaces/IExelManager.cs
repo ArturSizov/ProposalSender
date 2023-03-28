@@ -2,6 +2,6 @@
 {
     public interface IExelManager
     {
-
+        //bool OpenFileDialog();
     }
 }

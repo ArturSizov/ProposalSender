@@ -19,49 +19,52 @@ namespace ProposalSender.Contracts.Implementations
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Connect method
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="verificationValue"></param>
+        /// <returns></returns>
         public async Task Connect(UserSender user, string verificationValue)
         {
+            //client?.Dispose();
+
             try
             {
+                IsEnabled = true;
+
                 if (client == null)
-                {
                     client = new Client(Convert.ToInt32(user.ApiId), user.ApiHash);
-                    IsEnabled = true;
-                }
+
                 await DoLogin(verificationValue);
             }
             catch
             {
+                IsEnabled = false;
+
                 ErrorMessage = "Не верный API HASH";
-            }        
+            }
         }
 
+        /// <summary>
+        /// Disconnect method
+        /// </summary>
         public void Disconnect()
         {
-            if (client != null)
-            {
-                client.Reset(true, true);
-                IsEnabled = false;
-                Status = string.Empty;
-            }
-                
-        }
-        
-        public async Task SendCode(string verificationValue)
-        {
-            await DoLogin(verificationValue);
+            client?.Reset(true, true);
+            IsEnabled = false;
+            Status = string.Empty;
         }
 
         /// <summary>
         /// Message sending method
         /// </summary>
         /// <param name="message"></param>
-        public async Task SendMessage(IEnumerable<long>users, string message = "App Send Telegram Messages")
+        public async Task SendMessage(UserSender user, IEnumerable<long>users, string message = "App Send Telegram Messages")
         {
             if (client?.UserId == 0)
-            {
                 return;
-            }
+
             else
             {
                 foreach (var item in users)
@@ -79,9 +82,7 @@ namespace ProposalSender.Contracts.Implementations
         {
             try
             {
-                string what = await client.Login(loginInfo);
-
-                //var what = "verification_code";
+                string what = await client.Login(loginInfo); 
 
                 if (what != null)
                 {
@@ -109,6 +110,12 @@ namespace ProposalSender.Contracts.Implementations
             {
                 switch (ex.Message)
                 {
+                    case "You must provide a config value for phone_number":
+                        ErrorMessage = "Не указан номер телефона";
+                        break;
+                    case "Сделана попытка выполнить операцию на сокете для недоступного хоста.":
+                        ErrorMessage = "Нет подключения к Интернету";
+                        break;
                     case "API_ID_INVALID":
                         ErrorMessage = "Не верный API ID";
                         break;
@@ -128,12 +135,9 @@ namespace ProposalSender.Contracts.Implementations
                         ErrorMessage = ex.Message;
                         break;
                 }
-                client?.Dispose();
-                client = null;
-                Status = string.Empty;
-                IsEnabled = false;
-            }
 
+                Disconnect();
+            }
         }
         #endregion
     }

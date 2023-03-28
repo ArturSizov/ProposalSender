@@ -14,6 +14,7 @@ namespace ProposalSender.WPF.ViewModels
     {
         #region Private property
         private readonly ISendTelegramMessages send;
+        private readonly IPhoneBase phoneBase;
         private Visibility verificationView = Visibility.Collapsed;
         private string message = "Введите текст сообщения...";
         private string loginInfo;
@@ -21,11 +22,12 @@ namespace ProposalSender.WPF.ViewModels
         private string status;
         private string errorMessage;
         private bool isEnabled = false;
+        private ObservableCollection<long> phones = new();
         #endregion
 
         #region Public property
         public string Title => "Рассылатель в Telegram";
-        public ObservableCollection<long> Phones { get; set; } = new();
+        public ObservableCollection<long> Phones { get => phones; set => SetProperty(ref phones, value); }
         public UserSender User { get; set; } = new();
         public string Message { get => message; set => SetProperty(ref message, value); }
         public string VerificationValue { get => verificationValue; set => SetProperty(ref verificationValue, value); }
@@ -36,17 +38,16 @@ namespace ProposalSender.WPF.ViewModels
         public Visibility VerificationView { get => verificationView; set => SetProperty(ref verificationView, value); }
        
         #endregion
-        public TelegramSenderWindowViewModel(ISendTelegramMessages send)
+        public TelegramSenderWindowViewModel(ISendTelegramMessages send, IPhoneBase phoneBase)
         {
             this.send = send;
-
-            Phones.Add(9393921255);
+            this.phoneBase = phoneBase;
 
             User = new UserSender
             {
-                PhoneNumber = Properties.Settings.Default.PhoneNumber,
                 ApiHash = Properties.Settings.Default.ApiHash,
-                ApiId = Properties.Settings.Default.ApiId
+                ApiId = Properties.Settings.Default.ApiId,
+                PhoneNumber = Properties.Settings.Default.PhoneNumber
             };
 
             //Connect.Execute(null);
@@ -55,6 +56,7 @@ namespace ProposalSender.WPF.ViewModels
         #region Commands
         public ICommand Connect => new DelegateCommand<string>(async(str) =>
         {
+            Phones = phoneBase.Phones;
             await send.Connect(User, $"+7{User.PhoneNumber}");
             SetProperties();
             SaveProperties();
@@ -89,9 +91,11 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand SendMessage => new DelegateCommand<string>(async(str) =>
         {
-            await send.SendMessage(Phones, Message);
+            await send.Connect(User, $"+7{User.PhoneNumber}");
+            await send.SendMessage(User, Phones, Message);
+            SetProperties();
 
-        },(str)=> !string.IsNullOrWhiteSpace(str) & IsEnabled);
+        },(str)=> !string.IsNullOrWhiteSpace(str) & IsEnabled & Phones.Count != 0);
         #endregion
 
         #region Methods
@@ -132,14 +136,14 @@ namespace ProposalSender.WPF.ViewModels
 
            IsEnabled = send.IsEnabled;
 
-           if (LoginInfo != string.Empty)
+            if (LoginInfo != string.Empty && IsEnabled)
                 VerificationView = Visibility.Visible;
-           else VerificationView = Visibility.Collapsed;
+            else VerificationView = Visibility.Collapsed;
 
             if (send.ErrorMessage != null)
             {
                 MessageBox.Show(send.ErrorMessage, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
-                send.ErrorMessage = string.Empty;
+                send.ErrorMessage = null;
             }
         }
 
