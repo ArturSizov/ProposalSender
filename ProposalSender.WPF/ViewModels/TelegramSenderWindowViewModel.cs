@@ -107,6 +107,13 @@ namespace ProposalSender.WPF.ViewModels
         {
             phoneBase.DeletePhone((long)obj);
         });
+        /// <summary>
+        /// Delete all phone numbers command
+        /// </summary>
+        public ICommand DeleAllPhones => new DelegateCommand(() =>
+        {
+            phoneBase.DeleAllPhones(Phones);
+        });
         #endregion
 
         #region Methods

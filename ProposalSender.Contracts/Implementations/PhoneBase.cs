@@ -30,6 +30,15 @@ namespace ProposalSender.Contracts.Implementations
         {
             Phones.Remove(number);
         }
+        /// <summary>
+        /// Delete all phone numbers
+        /// </summary>
+        /// <param name="phones"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public void DeleAllPhones(IEnumerable<long> phones)
+        {
+            Phones.Clear();
+        }
         #endregion
     }
 }

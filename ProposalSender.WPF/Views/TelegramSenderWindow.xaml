@@ -225,7 +225,8 @@
                             <Button Content="Удалить все"
                                     Width="120"
                                     Height="30"
-                                    Margin="5"/>
+                                    Margin="5"
+                                    Command="{Binding DeleAllPhones}"/>
                         </StackPanel>
                         
                     </Grid>
