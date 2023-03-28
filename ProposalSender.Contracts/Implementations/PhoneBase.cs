@@ -19,5 +19,17 @@ namespace ProposalSender.Contracts.Implementations
             Phones.Add(9393921255);
             Phones.Add(9393997595);
         }
+
+        #region Methods
+
+        /// <summary>
+        /// Delete one number
+        /// </summary>
+        /// <param name="number"></param>
+        public void DeletePhone(long number)
+        {
+            Phones.Remove(number);
+        }
+        #endregion
     }
 }

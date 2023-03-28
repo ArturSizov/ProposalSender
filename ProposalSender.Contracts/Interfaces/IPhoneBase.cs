@@ -5,5 +5,7 @@ namespace ProposalSender.Contracts.Interfaces
     public interface IPhoneBase
     {
         ObservableCollection<long> Phones { get; set; }
+
+        void DeletePhone(long number);
     }
 }

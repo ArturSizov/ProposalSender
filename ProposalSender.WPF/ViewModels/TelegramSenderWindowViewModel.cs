@@ -50,7 +50,7 @@ namespace ProposalSender.WPF.ViewModels
                 PhoneNumber = Properties.Settings.Default.PhoneNumber
             };
 
-            //Connect.Execute(null);
+            Connect.Execute(null); // connection at application start
         }
 
         #region Commands
@@ -62,6 +62,9 @@ namespace ProposalSender.WPF.ViewModels
             SaveProperties();
         });
 
+        /// <summary>
+        /// Disconnect command
+        /// </summary>
         public ICommand Disconnect => new DelegateCommand(() =>
         {
             send.Disconnect();
@@ -96,10 +99,18 @@ namespace ProposalSender.WPF.ViewModels
             SetProperties();
 
         },(str)=> !string.IsNullOrWhiteSpace(str) & IsEnabled & Phones.Count != 0);
+
+        /// <summary>
+        /// Delete one phone number command
+        /// </summary>
+        public ICommand DeleteOnePhone => new DelegateCommand<object>((obj) =>
+        {
+            phoneBase.DeletePhone((long)obj);
+        });
         #endregion
 
         #region Methods
-        
+
         private void OpenUrl(string url)
         {
             try
