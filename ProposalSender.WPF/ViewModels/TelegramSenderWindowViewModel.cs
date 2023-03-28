@@ -114,6 +114,14 @@ namespace ProposalSender.WPF.ViewModels
         {
             phoneBase.DeleAllPhones(Phones);
         });
+
+        /// <summary>
+        /// Add one phone number command
+        /// </summary>
+        public ICommand AddOnePhoneNumber => new DelegateCommand(() =>
+        {
+            phoneBase.AddOnePhoneNumber(9393806425);
+        });
         #endregion
 
         #region Methods

@@ -6,6 +6,7 @@ namespace ProposalSender.Contracts.Interfaces
     {
         ObservableCollection<long> Phones { get; set; }
         void DeletePhone(long number);
+        void AddOnePhoneNumber(long number);
         void DeleAllPhones(IEnumerable<long> phones);
     }
 }

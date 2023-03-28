@@ -16,8 +16,7 @@ namespace ProposalSender.Contracts.Implementations
 
         public PhoneBase()
         {
-            Phones.Add(9393921255);
-            Phones.Add(9393997595);
+            Phones.Add(9393921255); 
         }
 
         #region Methods
@@ -38,6 +37,16 @@ namespace ProposalSender.Contracts.Implementations
         public void DeleAllPhones(IEnumerable<long> phones)
         {
             Phones.Clear();
+        }
+
+        /// <summary>
+        /// Add one phone number
+        /// </summary>
+        /// <param name="number"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public void AddOnePhoneNumber(long number)
+        {
+            Phones.Add(number);
         }
         #endregion
     }
