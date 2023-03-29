@@ -11,5 +11,6 @@ namespace ProposalSender.Contracts.Interfaces
         string Status { get; set; }
         public bool IsEnabled { get; set; }
         string ErrorMessage { get; set; }
+        Task<bool> IsThereTelegramApp(long number);
     }
 }

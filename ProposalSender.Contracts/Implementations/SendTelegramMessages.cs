@@ -2,6 +2,7 @@
 using ProposalSender.Contracts.Models;
 using TL;
 using WTelegram;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProposalSender.Contracts.Implementations
 {
@@ -72,10 +73,24 @@ namespace ProposalSender.Contracts.Implementations
                     if(client != null)
                     {
                         var result = await client.Contacts_ImportContacts(new[] { new InputPhoneContact { phone = $"+7{item}" } });
-                        await client.SendMessageAsync(result.users[result.imported[0].user_id], $"{message}");
+                        if (await IsThereTelegramApp(item))
+                            await client.SendMessageAsync(result.users[result.imported[0].user_id], $"{message}");
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Checks if the application is installed Telegram
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        public async Task<bool>IsThereTelegramApp(long number)
+        {
+            var result = await client.Contacts_ImportContacts(new[] { new InputPhoneContact { phone = $"+7{number}" } });
+            if (result.users.Count != 0)
+                return true;
+            else return false;
         }
 
         private async Task DoLogin(string loginInfo)

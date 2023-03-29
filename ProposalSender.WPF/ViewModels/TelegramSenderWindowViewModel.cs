@@ -23,6 +23,7 @@ namespace ProposalSender.WPF.ViewModels
         private string errorMessage;
         private bool isEnabled = false;
         private ObservableCollection<long> phones = new();
+        private bool installationStatusApp;
         #endregion
 
         #region Public property
@@ -36,7 +37,9 @@ namespace ProposalSender.WPF.ViewModels
         public string ErrorMessage { get => errorMessage; set => SetProperty(ref errorMessage, value); }
         public bool IsEnabled { get => isEnabled; set => SetProperty(ref isEnabled, value); }
         public Visibility VerificationView { get => verificationView; set => SetProperty(ref verificationView, value); }
-       
+        public bool InstallationStatusApp { get => installationStatusApp; set => SetProperty(ref installationStatusApp, value); }
+
+
         #endregion
         public TelegramSenderWindowViewModel(ISendTelegramMessages send, IPhoneBase phoneBase)
         {
@@ -118,9 +121,10 @@ namespace ProposalSender.WPF.ViewModels
         /// <summary>
         /// Add one phone number command
         /// </summary>
-        public ICommand AddOnePhoneNumber => new DelegateCommand(() =>
+        public ICommand AddOnePhoneNumber => new DelegateCommand(async() =>
         {
             phoneBase.AddOnePhoneNumber(9393806425);
+            InstallationStatusApp = await send.IsThereTelegramApp(9393921255);
         });
         #endregion
 

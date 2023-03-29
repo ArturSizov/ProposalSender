@@ -33,7 +33,6 @@ namespace ProposalSender.Contracts.Implementations
         /// Delete all phone numbers
         /// </summary>
         /// <param name="phones"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void DeleAllPhones(IEnumerable<long> phones)
         {
             Phones.Clear();
@@ -46,6 +45,7 @@ namespace ProposalSender.Contracts.Implementations
         /// <exception cref="NotImplementedException"></exception>
         public void AddOnePhoneNumber(long number)
         {
+
             Phones.Add(number);
         }
         #endregion
