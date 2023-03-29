@@ -10,7 +10,6 @@ namespace ProposalSender.Contracts.Interfaces
         string LoginInfo { get; set; }
         string Status { get; set; }
         public bool IsEnabled { get; set; }
-        string ErrorMessage { get; set; }
-        Task<bool> IsThereTelegramApp(long number);
+        string InfoMessage { get; set; }
     }
 }

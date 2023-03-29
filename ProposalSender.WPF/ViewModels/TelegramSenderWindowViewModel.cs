@@ -20,7 +20,7 @@ namespace ProposalSender.WPF.ViewModels
         private string loginInfo;
         private string verificationValue;
         private string status;
-        private string errorMessage;
+        private string infoMessage;
         private bool isEnabled = false;
         private ObservableCollection<long> phones = new();
         private bool installationStatusApp;
@@ -34,7 +34,7 @@ namespace ProposalSender.WPF.ViewModels
         public string VerificationValue { get => verificationValue; set => SetProperty(ref verificationValue, value); }
         public string LoginInfo { get => loginInfo; set => SetProperty(ref loginInfo, value); }
         public string Status { get => status; set => SetProperty(ref status, value); }
-        public string ErrorMessage { get => errorMessage; set => SetProperty(ref errorMessage, value); }
+        public string InfoMessage { get => infoMessage; set => SetProperty(ref infoMessage, value); }
         public bool IsEnabled { get => isEnabled; set => SetProperty(ref isEnabled, value); }
         public Visibility VerificationView { get => verificationView; set => SetProperty(ref verificationView, value); }
         public bool InstallationStatusApp { get => installationStatusApp; set => SetProperty(ref installationStatusApp, value); }
@@ -99,7 +99,7 @@ namespace ProposalSender.WPF.ViewModels
         {
             await send.Connect(User, $"+7{User.PhoneNumber}");
             await send.SendMessage(User, Phones, Message);
-            SetProperties();
+            SetProperties(MessageBoxImage.Information);
 
         },(str)=> !string.IsNullOrWhiteSpace(str) & IsEnabled & Phones.Count != 0);
 
@@ -124,7 +124,6 @@ namespace ProposalSender.WPF.ViewModels
         public ICommand AddOnePhoneNumber => new DelegateCommand(async() =>
         {
             phoneBase.AddOnePhoneNumber(9393806425);
-            InstallationStatusApp = await send.IsThereTelegramApp(9393921255);
         });
         #endregion
 
@@ -158,7 +157,7 @@ namespace ProposalSender.WPF.ViewModels
             }
         }
 
-        private void SetProperties()
+        private void SetProperties(MessageBoxImage mesImage = MessageBoxImage.Error)
         {
            Status = send.Status;
 
@@ -170,10 +169,10 @@ namespace ProposalSender.WPF.ViewModels
                 VerificationView = Visibility.Visible;
             else VerificationView = Visibility.Collapsed;
 
-            if (send.ErrorMessage != null)
+            if (send.InfoMessage != null)
             {
-                MessageBox.Show(send.ErrorMessage, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
-                send.ErrorMessage = null;
+                MessageBox.Show(send.InfoMessage, "Telegram", MessageBoxButton.OK, mesImage);
+                send.InfoMessage = null;
             }
         }
 

@@ -15,7 +15,7 @@ namespace ProposalSender.Contracts.Implementations
         #region Public property
         public string LoginInfo { get; set; }
         public string Status { get; set; }
-        public string ErrorMessage { get; set; }
+        public string InfoMessage { get; set; }
         public bool IsEnabled { get; set; }
         #endregion
 
@@ -28,8 +28,6 @@ namespace ProposalSender.Contracts.Implementations
         /// <returns></returns>
         public async Task Connect(UserSender user, string verificationValue)
         {
-            //client?.Dispose();
-
             try
             {
                 IsEnabled = true;
@@ -43,7 +41,7 @@ namespace ProposalSender.Contracts.Implementations
             {
                 IsEnabled = false;
 
-                ErrorMessage = "Не верный API HASH";
+                InfoMessage = "Не верный API HASH";
             }
         }
 
@@ -63,6 +61,9 @@ namespace ProposalSender.Contracts.Implementations
         /// <param name="message"></param>
         public async Task SendMessage(UserSender user, IEnumerable<long>users, string message = "App Send Telegram Messages")
         {
+            int countSent = 0;
+            int countUnsent = 0;
+
             if (client?.UserId == 0)
                 return;
 
@@ -73,24 +74,16 @@ namespace ProposalSender.Contracts.Implementations
                     if(client != null)
                     {
                         var result = await client.Contacts_ImportContacts(new[] { new InputPhoneContact { phone = $"+7{item}" } });
-                        if (await IsThereTelegramApp(item))
+                        if (result.users.Count != 0)
+                        {
                             await client.SendMessageAsync(result.users[result.imported[0].user_id], $"{message}");
+                            countSent++;
+                        }
+                        else countUnsent++;
                     }
                 }
+                InfoMessage = $"Количество отправленных сообщений: {countSent}\nНомера не пользуются Telegram: {countUnsent}";
             }
-        }
-
-        /// <summary>
-        /// Checks if the application is installed Telegram
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
-        public async Task<bool>IsThereTelegramApp(long number)
-        {
-            var result = await client.Contacts_ImportContacts(new[] { new InputPhoneContact { phone = $"+7{number}" } });
-            if (result.users.Count != 0)
-                return true;
-            else return false;
         }
 
         private async Task DoLogin(string loginInfo)
@@ -126,28 +119,28 @@ namespace ProposalSender.Contracts.Implementations
                 switch (ex.Message)
                 {
                     case "You must provide a config value for phone_number":
-                        ErrorMessage = "Не указан номер телефона";
+                        InfoMessage = "Не указан номер телефона";
                         break;
                     case "Сделана попытка выполнить операцию на сокете для недоступного хоста.":
-                        ErrorMessage = "Нет подключения к Интернету";
+                        InfoMessage = "Нет подключения к Интернету";
                         break;
                     case "API_ID_INVALID":
-                        ErrorMessage = "Не верный API ID";
+                        InfoMessage = "Не верный API ID";
                         break;
                     case "PHONE_CODE_INVALID":
-                        ErrorMessage = "Не верный код верификации";
+                        InfoMessage = "Не верный код верификации";
                         break;
                     case "FLOOD_WAIT_X":
-                        ErrorMessage = "Аккаунт временно заблокирован";
+                        InfoMessage = "Аккаунт временно заблокирован";
                         break;
                     case "PHONE_NUMBER_INVALID":
-                        ErrorMessage = "Не верный номер телефона";
+                        InfoMessage = "Не верный номер телефона";
                         break;
                     case "PHONE_NUMBER_BANNED":
-                        ErrorMessage = "Номер телефона заблокирован";
+                        InfoMessage = "Номер телефона заблокирован";
                         break;
                     default:
-                        ErrorMessage = ex.Message;
+                        InfoMessage = ex.Message;
                         break;
                 }
 

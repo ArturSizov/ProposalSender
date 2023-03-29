@@ -17,6 +17,7 @@ namespace ProposalSender.Contracts.Implementations
         public PhoneBase()
         {
             Phones.Add(9393921255); 
+            Phones.Add(9393997595);
         }
 
         #region Methods
