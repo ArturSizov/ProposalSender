@@ -2,7 +2,6 @@
 using ProposalSender.Contracts.Models;
 using TL;
 using WTelegram;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ProposalSender.Contracts.Implementations
 {
@@ -26,7 +25,7 @@ namespace ProposalSender.Contracts.Implementations
         /// <param name="user"></param>
         /// <param name="verificationValue"></param>
         /// <returns></returns>
-        public async Task Connect(UserSender user, string verificationValue)
+        public async Task<Client> Connect(UserSender user, string verificationValue)
         {
             try
             {
@@ -36,12 +35,14 @@ namespace ProposalSender.Contracts.Implementations
                     client = new Client(Convert.ToInt32(user.ApiId), user.ApiHash);
 
                 await DoLogin(verificationValue);
+
+                return client;
             }
             catch
             {
                 IsEnabled = false;
-
                 InfoMessage = "Не верный API HASH";
+                return null;
             }
         }
 
@@ -64,25 +65,41 @@ namespace ProposalSender.Contracts.Implementations
             int countSent = 0;
             int countUnsent = 0;
 
-            if (client?.UserId == 0)
-                return;
-
-            else
+            try
             {
-                foreach (var item in users)
+                if (client?.UserId == 0)
+                    return;
+
+                else
                 {
-                    if(client != null)
+                    foreach (var item in users)
                     {
-                        var result = await client.Contacts_ImportContacts(new[] { new InputPhoneContact { phone = $"+7{item}" } });
-                        if (result.users.Count != 0)
+                        if (client != null)
                         {
-                            await client.SendMessageAsync(result.users[result.imported[0].user_id], $"{message}");
-                            countSent++;
+                            var result = await client.Contacts_ImportContacts(new[] { new InputPhoneContact { phone = $"+7{item}" } });
+                            if (result.users.Count != 0)
+                            {
+                                var mes = await client.SendMessageAsync(result.users[result.imported[0].user_id], $"{message}");
+                                countSent++;
+                            }
+                            else countUnsent++;
+                            
                         }
-                        else countUnsent++;
                     }
+                    InfoMessage = $"Количество отправленных сообщений: {countSent}\nНомера не пользуются Telegram: {countUnsent}";
                 }
-                InfoMessage = $"Количество отправленных сообщений: {countSent}\nНомера не пользуются Telegram: {countUnsent}";
+            }
+            catch (Exception ex)
+            {
+                switch (ex.Message)
+                {
+                    case "You must connect to Telegram first":
+                        InfoMessage = "Нет подключения к Telegram";
+                        break;
+                    default:
+                        InfoMessage = ex.Message;
+                        break;
+                }
             }
         }
 

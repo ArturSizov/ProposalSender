@@ -97,9 +97,18 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand SendMessage => new DelegateCommand<string>(async(str) =>
         {
-            await send.Connect(User, $"+7{User.PhoneNumber}");
-            await send.SendMessage(User, Phones, Message);
-            SetProperties(MessageBoxImage.Information);
+            if (PingInternet())
+            {
+                await send.SendMessage(User, Phones, Message);
+                SetProperties(MessageBoxImage.Information);
+            }
+            else
+            {
+                send.Disconnect();
+                send.InfoMessage = "Нет подключения к Интернету";
+                SetProperties(MessageBoxImage.Error);
+            }
+
 
         },(str)=> !string.IsNullOrWhiteSpace(str) & IsEnabled & Phones.Count != 0);
 
@@ -182,6 +191,16 @@ namespace ProposalSender.WPF.ViewModels
             Properties.Settings.Default.ApiId = User.ApiId;
             Properties.Settings.Default.PhoneNumber = User.PhoneNumber;
             Properties.Settings.Default.Save();
+        }
+
+        private bool PingInternet()
+        {
+            bool bb = System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
+
+            if (bb == true)
+               return true;
+            else
+                return false;
         }
         #endregion
     }
