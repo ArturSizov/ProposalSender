@@ -6,7 +6,7 @@ namespace ProposalSender.Contracts.Implementations
 {
     public class PhoneBase : BindableBase, IPhoneBase
     {
-        #region Public property
+        #region Private property
         private ObservableCollection<long> phones = new();
         #endregion
 
@@ -43,10 +43,8 @@ namespace ProposalSender.Contracts.Implementations
         /// Add one phone number
         /// </summary>
         /// <param name="number"></param>
-        /// <exception cref="NotImplementedException"></exception>
         public void AddOnePhoneNumber(long number)
         {
-
             Phones.Add(number);
         }
         #endregion
