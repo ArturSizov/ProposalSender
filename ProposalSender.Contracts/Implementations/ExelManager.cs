@@ -23,13 +23,14 @@ namespace ProposalSender.Contracts.Implementations
 
             var totalRows = worksheet.Dimension.End.Row;
 
-            var value = worksheet.Cells[$"Q23:Q{totalRows}"].ToList();
+            var value = worksheet.Cells[$"A1:A{totalRows}"].ToList();
 
             foreach (var item in value)
             {
-                phones.Add(long.Parse(item.Text)); 
+                if (item.Text.Length == 10)
+                    phones.Add(long.Parse(item.Text));
+                
             }
-
             return phones;
         }
     }

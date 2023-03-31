@@ -8,7 +8,6 @@ using System.Runtime.InteropServices;
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
 using Microsoft.Win32;
-using TL;
 
 namespace ProposalSender.WPF.ViewModels
 {
@@ -54,8 +53,6 @@ namespace ProposalSender.WPF.ViewModels
                 ApiId = Properties.Settings.Default.ApiId,
                 PhoneNumber = Properties.Settings.Default.PhoneNumber
             };
-
-            Connect.Execute(null); // connection at application start
         }
 
         #region Commands
@@ -144,14 +141,12 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand LoadingFromFile => new DelegateCommand(() =>
         {
-            string filePath = string.Empty;
-
-            OpenFileDialog openFileDialog = new OpenFileDialog();
+            var openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Exel|*.xlsx";
 
             if (openFileDialog.ShowDialog() == true)
             {
-                filePath = openFileDialog.FileName;
+                var filePath = openFileDialog.FileName;
                 Phones = phoneBase.LoadingFromFile(filePath);
             }
             else return;
@@ -186,7 +181,6 @@ namespace ProposalSender.WPF.ViewModels
                 }
             }
         }
-
         private void SetProperties(MessageBoxImage mesImage = MessageBoxImage.Error)
         {
            Status = send.Status;
@@ -205,7 +199,6 @@ namespace ProposalSender.WPF.ViewModels
                 send.InfoMessage = null;
             }
         }
-
         private void SaveProperties()
         {
             Properties.Settings.Default.ApiHash = User.ApiHash;
@@ -213,7 +206,6 @@ namespace ProposalSender.WPF.ViewModels
             Properties.Settings.Default.PhoneNumber = User.PhoneNumber;
             Properties.Settings.Default.Save();
         }
-
         private bool PingInternet()
         {
             bool bb = System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();

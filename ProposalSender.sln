@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProposalSender.Contracts", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProposalSender.Blazor", "ProposalSender.Blazor\ProposalSender.Blazor.csproj", "{D0884FCA-705A-4CCA-8C81-F683964D4764}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProposalSender.WPF", "ProposalSender.WPF\ProposalSender.WPF.csproj", "{963DB454-63EB-4744-BCAE-3279C40B2971}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProposalSender.WPF", "ProposalSender.WPF\ProposalSender.WPF.csproj", "{963DB454-63EB-4744-BCAE-3279C40B2971}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

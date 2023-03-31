@@ -223,7 +223,8 @@
                                     Width="120"
                                     Height="30"
                                     Margin="5"
-                                    Command="{Binding AddOnePhoneNumber}"/>
+                                    Command="{Binding AddOnePhoneNumber}"
+                                    Visibility="Collapsed"/>
                             <Button Content="Удалить все"
                                     Width="120"
                                     Height="30"
