@@ -1,7 +1,9 @@
-﻿namespace ProposalSender.Contracts.Interfaces
+﻿using System.Collections.ObjectModel;
+
+namespace ProposalSender.Contracts.Interfaces
 {
     public interface IExelManager
     {
-        //bool OpenFileDialog();
+        ObservableCollection<long> ReadExelFile(string filePath);
     }
 }

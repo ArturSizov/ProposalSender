@@ -213,11 +213,12 @@
                         <StackPanel Orientation="Horizontal"
                                     VerticalAlignment="Bottom"
                                     HorizontalAlignment="Right"
-                                    Margin="20">
+                                    Margin="0,0,25,10">
                             <Button Content="Добавить список"
                                     Width="120"
                                     Height="30"
-                                    Margin="5"/>
+                                    Margin="5"
+                                    Command="{Binding LoadingFromFile}"/>
                             <Button Content="Добавить номер"
                                     Width="120"
                                     Height="30"
@@ -235,7 +236,7 @@
                                 Height="45"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
-                                Margin="0,0,25,65"
+                                Margin="0,0,30,55"
                                 Command="{Binding SendMessage}"
                                 CommandParameter="{Binding ElementName=Message, Path=Text}"/>
                     </Grid>

@@ -22,8 +22,8 @@ namespace ProposalSender.WPF
         {
             RootContainer.Container.RegisterSingleton<TelegramSenderWindowViewModel, TelegramSenderWindowViewModel>();
             RootContainer.Container.RegisterSingleton<ISendTelegramMessages, SendTelegramMessages>();
-            RootContainer.Container.RegisterSingleton<IExelManager, ExelManager>();
             RootContainer.Container.RegisterSingleton<IPhoneBase, PhoneBase>();
+            RootContainer.Container.RegisterSingleton<IExelManager, ExelManager>();
         }
     }
 }

@@ -57,9 +57,11 @@ namespace ProposalSender.WPF.ViewModels
         }
 
         #region Commands
+        /// <summary>
+        /// Connect command
+        /// </summary>
         public ICommand Connect => new DelegateCommand<string>(async(str) =>
         {
-            Phones = phoneBase.Phones;
             await send.Connect(User, $"+7{User.PhoneNumber}");
             SetProperties();
             SaveProperties();
@@ -117,27 +119,34 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand DeleteOnePhone => new DelegateCommand<object>((obj) =>
         {
-            phoneBase.DeletePhone((long)obj);
+            Phones.Remove((long)obj);
         });
         /// <summary>
         /// Delete all phone numbers command
         /// </summary>
         public ICommand DeleAllPhones => new DelegateCommand(() =>
         {
-            phoneBase.DeleAllPhones(Phones);
+            Phones.Clear();
         });
 
         /// <summary>
         /// Add one phone number command
         /// </summary>
-        public ICommand AddOnePhoneNumber => new DelegateCommand(async() =>
+        public ICommand AddOnePhoneNumber => new DelegateCommand(()=>
         {
-            phoneBase.AddOnePhoneNumber(9393806425);
+            Phones.Add(9393806425);
+        });
+
+        /// <summary>
+        /// Download command from excel file
+        /// </summary>
+        public ICommand LoadingFromFile => new DelegateCommand(() =>
+        {
+            Phones = phoneBase.LoadingFromFile("C:/Users/Artur/Desktop/TestPhones.xlsx");
         });
         #endregion
 
         #region Methods
-
         private void OpenUrl(string url)
         {
             try
