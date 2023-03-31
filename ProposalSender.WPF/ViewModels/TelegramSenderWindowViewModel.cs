@@ -109,9 +109,7 @@ namespace ProposalSender.WPF.ViewModels
                 send.InfoMessage = "Нет подключения к Интернету";
                 SetProperties(MessageBoxImage.Error);
             }
-
-
-        },(str)=> !string.IsNullOrWhiteSpace(str) & IsEnabled & Phones.Count != 0);
+        });
 
         /// <summary>
         /// Delete one phone number command
