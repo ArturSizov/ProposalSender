@@ -1,10 +1,9 @@
-﻿using Prism.Mvvm;
-using ProposalSender.Contracts.Interfaces;
+﻿using ProposalSender.Contracts.Interfaces;
 using System.Collections.ObjectModel;
 
 namespace ProposalSender.Contracts.Implementations
 {
-    public class PhoneBase : BindableBase, IPhoneBase
+    public class PhoneBase : IPhoneBase
     {
         #region Private property
         private readonly IExelManager exel;

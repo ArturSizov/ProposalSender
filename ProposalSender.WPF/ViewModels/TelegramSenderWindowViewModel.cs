@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
+using Microsoft.Win32;
+using TL;
 
 namespace ProposalSender.WPF.ViewModels
 {
@@ -142,7 +144,17 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand LoadingFromFile => new DelegateCommand(() =>
         {
-            Phones = phoneBase.LoadingFromFile("C:/Users/Artur/Desktop/TestPhones.xlsx");
+            string filePath = string.Empty;
+
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Exel|*.xlsx";
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                filePath = openFileDialog.FileName;
+                Phones = phoneBase.LoadingFromFile(filePath);
+            }
+            else return;
         });
         #endregion
 
