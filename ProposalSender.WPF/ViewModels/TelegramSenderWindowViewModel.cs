@@ -25,6 +25,7 @@ namespace ProposalSender.WPF.ViewModels
         private bool isEnabled = false;
         private ObservableCollection<long> phones = new();
         private bool installationStatusApp;
+        private int selectedIndex = 0;
         #endregion
 
         #region Public property
@@ -39,9 +40,10 @@ namespace ProposalSender.WPF.ViewModels
         public bool IsEnabled { get => isEnabled; set => SetProperty(ref isEnabled, value); }
         public Visibility VerificationView { get => verificationView; set => SetProperty(ref verificationView, value); }
         public bool InstallationStatusApp { get => installationStatusApp; set => SetProperty(ref installationStatusApp, value); }
-
+        public int SelectedIndex { get => selectedIndex; set => SetProperty(ref selectedIndex, value); }
 
         #endregion
+
         public TelegramSenderWindowViewModel(ISendTelegramMessages send, IPhoneBase phoneBase)
         {
             this.send = send;
@@ -72,6 +74,9 @@ namespace ProposalSender.WPF.ViewModels
         public ICommand Disconnect => new DelegateCommand(() =>
         {
             send.Disconnect();
+            send.IsEnabled = false;
+            Phones.Clear();
+            SelectedIndex = 0;
             SetProperties();
         });
         /// <summary>

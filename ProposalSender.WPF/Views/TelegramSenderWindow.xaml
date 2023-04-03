@@ -135,7 +135,9 @@
                 Visibility="{Binding IsEnabled, Converter={StaticResource ButtonConnectVisibilityConverter}}"
                 Command="{Binding Connect}"/>
        
-        <TabControl Grid.Row="1" Margin="1">
+        <TabControl Grid.Row="1" 
+                    Margin="1"
+                    SelectedIndex="{Binding SelectedIndex}">
             <TabItem 
                 Header="Отправка сообщений">
                 <TabItem.Content>
