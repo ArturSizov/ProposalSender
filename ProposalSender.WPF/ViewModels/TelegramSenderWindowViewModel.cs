@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using Prism.Mvvm;
 using System.Collections.ObjectModel;
 using Microsoft.Win32;
+using System;
 
 namespace ProposalSender.WPF.ViewModels
 {
@@ -76,6 +77,7 @@ namespace ProposalSender.WPF.ViewModels
             send.Disconnect();
             send.IsEnabled = false;
             Phones.Clear();
+            Message = "Введите текст сообщения...";
             SelectedIndex = 0;
             SetProperties();
         });
@@ -147,12 +149,19 @@ namespace ProposalSender.WPF.ViewModels
             var openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Exel|*.xlsx";
 
-            if (openFileDialog.ShowDialog() == true)
+            try
             {
-                var filePath = openFileDialog.FileName;
-                Phones = phoneBase.LoadingFromFile(filePath);
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    var filePath = openFileDialog.FileName;
+                    Phones = phoneBase.LoadingFromFile(filePath);
+                }
+                else return;
             }
-            else return;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         });
         #endregion
 

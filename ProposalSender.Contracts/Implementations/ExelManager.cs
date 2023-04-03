@@ -1,6 +1,6 @@
 ﻿using ProposalSender.Contracts.Interfaces;
 using OfficeOpenXml;
-using System.Collections.ObjectModel;
+using System.Collections.ObjectModel; 
 
 namespace ProposalSender.Contracts.Implementations
 {
@@ -27,10 +27,18 @@ namespace ProposalSender.Contracts.Implementations
 
             foreach (var item in value)
             {
-                if (item.Text.Length == 10)
-                    phones.Add(long.Parse(item.Text));
-                
+                var res = phones.Contains(long.Parse(item.Text));
+
+                if (item.Text.Length == 10 && !phones.Contains(long.Parse(item.Text)))
+                {
+                   phones.Add(long.Parse(item.Text));
+                }
             }
+
+
+            if (phones.Count > 200)
+                throw new ArgumentException("Количество добавляемых номеров не может быть больше 200.\nПоправьте список в exel файле");
+
             return phones;
         }
     }
