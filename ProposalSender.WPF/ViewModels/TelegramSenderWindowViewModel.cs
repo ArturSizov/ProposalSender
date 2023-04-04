@@ -125,10 +125,11 @@ namespace ProposalSender.WPF.ViewModels
         {
             Phones.Remove((long)obj);
         });
+
         /// <summary>
         /// Delete all phone numbers command
         /// </summary>
-        public ICommand DeleAllPhones => new DelegateCommand(() =>
+        public ICommand DeletAllPhones => new DelegateCommand(() =>
         {
             Phones.Clear();
         });
