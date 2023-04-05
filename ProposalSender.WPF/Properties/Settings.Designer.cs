@@ -25,7 +25,7 @@ namespace ProposalSender.WPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("9390000000000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("9391234569")]
         public long PhoneNumber {
             get {
                 return ((long)(this["PhoneNumber"]));
@@ -37,7 +37,7 @@ namespace ProposalSender.WPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("API ID от Телеграм")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Your API ID")]
         public string ApiId {
             get {
                 return ((string)(this["ApiId"]));
@@ -49,7 +49,7 @@ namespace ProposalSender.WPF.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("API Hash от Телеграм")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Your API Hash")]
         public string ApiHash {
             get {
                 return ((string)(this["ApiHash"]));

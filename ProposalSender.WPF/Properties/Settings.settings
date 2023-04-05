@@ -3,13 +3,13 @@
   <Profiles />
   <Settings>
     <Setting Name="PhoneNumber" Type="System.Int64" Scope="User">
-      <Value Profile="(Default)">9390000000000</Value>
+      <Value Profile="(Default)">9391234569</Value>
     </Setting>
     <Setting Name="ApiId" Type="System.String" Scope="User">
-      <Value Profile="(Default)">API ID от Телеграм</Value>
+      <Value Profile="(Default)">Your API ID</Value>
     </Setting>
     <Setting Name="ApiHash" Type="System.String" Scope="User">
-      <Value Profile="(Default)">API Hash от Телеграм</Value>
+      <Value Profile="(Default)">Your API Hash</Value>
     </Setting>
   </Settings>
 </SettingsFile>
