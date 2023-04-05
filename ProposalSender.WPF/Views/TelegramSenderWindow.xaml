@@ -16,6 +16,7 @@
         <converter:ButtonConnectVisibilityConverter x:Key="ButtonConnectVisibilityConverter"/>
         <converter:ButtonDisconnectVisibilityConverter x:Key="ButtonDisconnectVisibilityConverter"/>
         <converter:ButtonEnabledMConverter x:Key="ButtonEnabledMConverter"/>
+        <converter:DeleteButtonEnabledConverter x:Key="DeleteButtonEnabledConverter"/>
     </Window.Resources>
 
 
@@ -51,7 +52,7 @@
                         <TextBlock Text="API Hash:"/>
                         <TextBox Text="{Binding User.ApiHash}"
                                  Height="20"
-                                 MinWidth="230"
+                                 MinWidth="232"
                                  VerticalAlignment="Top"
                                  Margin="3,0,0,0"
                                  BorderThickness="0,0,0,1"
@@ -137,7 +138,7 @@
                 Margin="0,0,10,0"
                 Visibility="{Binding IsEnabled, Converter={StaticResource ButtonConnectVisibilityConverter}}"
                 Command="{Binding Connect}"/>
-       
+
         <TabControl Grid.Row="1" 
                     Margin="1"
                     SelectedIndex="{Binding SelectedIndex}">
@@ -151,7 +152,7 @@
                                 CornerRadius="8,8,3,3" 
                                 Margin="3">
                             <TextBox x:Name="Message"
-                                     Text="{Binding Message}"
+                                     Text="{Binding Message, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                      TextWrapping="Wrap"
                                      VerticalScrollBarVisibility="Visible"
                                      AcceptsReturn="True"
@@ -168,7 +169,7 @@
                                 Margin="0,0,35,15"
                                 Command="{Binding SendMessage}">
                             <Button.IsEnabled>
-                                <MultiBinding Converter="{StaticResource ButtonEnabledMConverter}">
+                                <MultiBinding Converter="{StaticResource ButtonEnabledMConverter}"> 
                                     <Binding Path="Message"/>
                                     <Binding Path="Phones"/>
                                     <Binding Path="IsEnabled"/>
@@ -187,7 +188,7 @@
                                 CornerRadius="8,8,3,3" 
                                 Margin="3">
                             <ListBox Margin="5" 
-                                     ItemsSource="{Binding Phones}">
+                                     ItemsSource="{Binding Phones, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
                                 <ListBox.ItemTemplate>
                                     <DataTemplate>
                                         <StackPanel Orientation="Horizontal">
@@ -212,7 +213,7 @@
                                                         <ControlTemplate>
                                                             <TextBlock Text="Список пуст. Начните работу с добавления номера телефона."
                                                                        HorizontalAlignment="Center"
-                                                                       VerticalAlignment="Center"/> 
+                                                                       VerticalAlignment="Center"/>
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
@@ -231,17 +232,12 @@
                                     Height="30"
                                     Margin="5"
                                     Command="{Binding LoadingFromFile}"/>
-                            <Button Content="Добавить номер"
-                                    Width="120"
-                                    Height="30"
-                                    Margin="5"
-                                    Command="{Binding AddOnePhoneNumber}"
-                                    Visibility="Collapsed"/>
                             <Button Content="Удалить все"
                                     Width="120"
                                     Height="30"
                                     Margin="5"
-                                    Command="{Binding DeletAllPhones}"/>
+                                    Command="{Binding DeletAllPhones}"
+                                    IsEnabled="{Binding Phones.Count, Converter={StaticResource DeleteButtonEnabledConverter}}"/>
                         </StackPanel>
                         <Button Grid.Row="1"
                                 Content="Отправить"
@@ -263,6 +259,5 @@
                 </TabItem.Content>
             </TabItem>
         </TabControl>
-        
     </Grid>
 </Window>

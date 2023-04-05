@@ -9,6 +9,7 @@ using Prism.Mvvm;
 using System.Collections.ObjectModel;
 using Microsoft.Win32;
 using System;
+using ProposalSender.Contracts.Implementations;
 
 namespace ProposalSender.WPF.ViewModels
 {
@@ -103,7 +104,7 @@ namespace ProposalSender.WPF.ViewModels
         /// <summary>
         /// Send Message command
         /// </summary>
-        public ICommand SendMessage => new DelegateCommand<string>(async(str) =>
+        public ICommand SendMessage => new DelegateCommand(async() =>
         {
             if (PingInternet())
             {
@@ -123,15 +124,17 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand DeleteOnePhone => new DelegateCommand<object>((obj) =>
         {
-            Phones.Remove((long)obj);
+            Phones.Remove((long)obj); 
+            RaisePropertyChanged(nameof(Phones));
         });
 
         /// <summary>
         /// Delete all phone numbers command
         /// </summary>
         public ICommand DeletAllPhones => new DelegateCommand(() =>
-        {
+        {   
             Phones.Clear();
+            RaisePropertyChanged(nameof(Phones));
         });
 
         /// <summary>
@@ -164,6 +167,7 @@ namespace ProposalSender.WPF.ViewModels
                 MessageBox.Show(ex.Message, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         });
+
         #endregion
 
         #region Methods
