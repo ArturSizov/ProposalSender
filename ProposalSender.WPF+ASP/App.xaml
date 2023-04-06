@@ -1,0 +1,9 @@
+﻿<Application x:Class="ProposalSender.WPF_ASP.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ProposalSender.WPF_ASP.Views.Locator"
+             StartupUri="Views/TelegramSenderWindow.xaml">
+    <Application.Resources>
+        <local:ViewModelLocator x:Key="Locator"/>  
+    </Application.Resources>
+</Application>

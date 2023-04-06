@@ -1,3 +1,7 @@
+using ProposalSender.ASP.Implementations;
+using ProposalSender.Contracts.Implementations;
+using ProposalSender.Contracts.Interfaces;
+
 internal class Program
 {
     private static void Main(string[] args)
@@ -7,7 +11,7 @@ internal class Program
         builder.Services.AddSwaggerGen();
 
         //Add services
-        //builder.Services.AddSingleton<IDataProvider, DataProvider>();
+        builder.Services.AddSingleton<ISendTelegramMessages, SendTelegramMessages>();
         //builder.Services.AddSingleton<IPersonData, PersonData>();
 
         var app = builder.Build();

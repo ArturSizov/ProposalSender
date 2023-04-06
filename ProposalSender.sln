@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProposalSender.Blazor", "Pr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProposalSender.WPF", "ProposalSender.WPF\ProposalSender.WPF.csproj", "{963DB454-63EB-4744-BCAE-3279C40B2971}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProposalSender.WPF+ASP", "ProposalSender.WPF+ASP\ProposalSender.WPF+ASP.csproj", "{16A65AE9-9BA3-4B4C-82CA-388B92D7455A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{963DB454-63EB-4744-BCAE-3279C40B2971}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{963DB454-63EB-4744-BCAE-3279C40B2971}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{963DB454-63EB-4744-BCAE-3279C40B2971}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16A65AE9-9BA3-4B4C-82CA-388B92D7455A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16A65AE9-9BA3-4B4C-82CA-388B92D7455A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16A65AE9-9BA3-4B4C-82CA-388B92D7455A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16A65AE9-9BA3-4B4C-82CA-388B92D7455A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -46,6 +52,7 @@ Global
 		{99F1C25A-37B9-43C6-9497-5FCE75D1CC61} = {C4E61C86-F923-40B6-B302-E06DB9BE9EA7}
 		{D0884FCA-705A-4CCA-8C81-F683964D4764} = {DA8C7FF0-6607-4E9F-AF3C-268646F74E10}
 		{963DB454-63EB-4744-BCAE-3279C40B2971} = {DA8C7FF0-6607-4E9F-AF3C-268646F74E10}
+		{16A65AE9-9BA3-4B4C-82CA-388B92D7455A} = {DA8C7FF0-6607-4E9F-AF3C-268646F74E10}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E1155B81-09B5-475C-A407-274B952F72B6}
