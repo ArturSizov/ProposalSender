@@ -60,35 +60,21 @@ namespace ProposalSender.Contracts.Implementations
         /// Message sending method
         /// </summary>
         /// <param name="message"></param>
-        public async Task SendMessage(UserSender user, IEnumerable<long>users, string message = "App Send Telegram Messages")
+        public async Task<bool> SendMessage(UserSender user, long phone, string message = "App Send Telegram Messages")
         {
-            int countSent = 0;
-            int countUnsent = 0;
-
             try
             {
-                if (client?.UserId == 0)
-                    return;
+                var result = await client.Contacts_ImportContacts(new[] { new InputPhoneContact { phone = $"+7{phone}" } });
 
-                else
+                if (result.users.Count != 0)
                 {
-                    foreach (var item in users)
-                    {
-                        if (client != null)
-                        {
-                            var result = await client.Contacts_ImportContacts(new[] { new InputPhoneContact { phone = $"+7{item}" } });
-                            if (result.users.Count != 0)
-                            {
-                                var mes = await client.SendMessageAsync(result.users[result.imported[0].user_id], $"{message}");
-                                countSent++;
-                            }
-                            else countUnsent++;
-                            
-                        }
-                    }
-                    InfoMessage = $"Количество отправленных сообщений: {countSent}\nНомера не пользуются Telegram: {countUnsent}";
+                    await client.SendMessageAsync(result.users[result.imported[0].user_id], $"{message}");
+                    return true;
                 }
+                else 
+                    return false;
             }
+
             catch (Exception ex)
             {
                 switch (ex.Message)
@@ -100,6 +86,7 @@ namespace ProposalSender.Contracts.Implementations
                         InfoMessage = ex.Message;
                         break;
                 }
+                return false;
             }
         }
 

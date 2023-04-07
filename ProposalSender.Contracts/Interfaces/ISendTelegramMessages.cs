@@ -6,7 +6,7 @@ namespace ProposalSender.Contracts.Interfaces
     public interface ISendTelegramMessages
     {
         Task<Client> Connect(UserSender user, string verificationValue);
-        Task SendMessage(UserSender user, IEnumerable<long> users, string message = "App Send Telegram Messages");
+        Task<bool> SendMessage(UserSender user, long phone, string message = "App Send Telegram Messages");
         void Disconnect();
         string LoginInfo { get; set; }
         string Status { get; set; }

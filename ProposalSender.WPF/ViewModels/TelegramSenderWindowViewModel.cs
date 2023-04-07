@@ -108,7 +108,20 @@ namespace ProposalSender.WPF.ViewModels
         {
             if (PingInternet())
             {
-                await send.SendMessage(User, Phones, Message);
+                int countSent = 0;
+                int countUnsent = 0;
+
+                foreach (var phone in Phones)
+                {
+                    var res = await send.SendMessage(User, phone, Message);
+
+                    if(res)
+                        countSent++;
+                    else 
+                        countUnsent++;
+                }
+                send.InfoMessage = $"Количество отправленных сообщений: {countSent}\nНомера не пользуются Telegram: {countUnsent}";
+
                 SetProperties(MessageBoxImage.Information);
             }
             else
