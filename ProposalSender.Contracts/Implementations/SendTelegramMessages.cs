@@ -12,9 +12,9 @@ namespace ProposalSender.Contracts.Implementations
         #endregion
 
         #region Public property
-        public string LoginInfo { get; set; }
-        public string Status { get; set; }
-        public string InfoMessage { get; set; }
+        public string LoginInfo { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public string InfoMessage { get; set; } = string.Empty;
         public bool IsEnabled { get; set; }
         #endregion
 
@@ -25,7 +25,7 @@ namespace ProposalSender.Contracts.Implementations
         /// <param name="user"></param>
         /// <param name="verificationValue"></param>
         /// <returns></returns>
-        public async Task<Client> Connect(UserSender user, string verificationValue)
+        public async Task<Client> Connect(UserSender? user, string verificationValue)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace ProposalSender.Contracts.Implementations
         /// Message sending method
         /// </summary>
         /// <param name="message"></param>
-        public async Task<bool> SendMessage(UserSender user, long phone, string message = "App Send Telegram Messages")
+        public async Task<bool> SendMessage(long phone, string message = "App Send Telegram Messages")
         {
             try
             {

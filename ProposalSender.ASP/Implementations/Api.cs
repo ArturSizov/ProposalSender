@@ -26,11 +26,11 @@ namespace ProposalSender.ASP.Implementations
             }
         }
 
-        private static async Task<IResult> SendCode(ISendTelegramMessages send, UserSender user, string verificationValue)
+        private static async Task<IResult> SendCode(ISendTelegramMessages send, string verificationValue)
         {
             try
             {
-                return Results.Ok(await send.Connect(user, verificationValue));
+                return Results.Ok(await send.Connect(null, verificationValue));
             }
             catch
             {
@@ -38,13 +38,11 @@ namespace ProposalSender.ASP.Implementations
             }
         }
 
-        private static async Task<IResult>SendMessage(ISendTelegramMessages send, UserSender user, long phone, string message)
+        private static async Task<IResult>SendMessage(ISendTelegramMessages send, long phone, string message)
         {
             try
             {
-                var phones = new ObservableCollection<long>();
-                phones.Add(phone);
-                await send.SendMessage(user, phones, message);
+                await send.SendMessage(phone, message);
                 return Results.Ok();
             }
             catch 

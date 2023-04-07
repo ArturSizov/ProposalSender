@@ -20,7 +20,7 @@ namespace ProposalSender.WPF.ViewModels
         private readonly IPhoneBase phoneBase;
         private Visibility verificationView = Visibility.Collapsed;
         private string message = "Введите текст сообщения...";
-        private string loginInfo;
+        private string loginInfo = string.Empty;
         private string verificationValue;
         private string status;
         private string infoMessage;
@@ -113,7 +113,7 @@ namespace ProposalSender.WPF.ViewModels
 
                 foreach (var phone in Phones)
                 {
-                    var res = await send.SendMessage(User, phone, Message);
+                    var res = await send.SendMessage(phone, Message);
 
                     if(res)
                         countSent++;
