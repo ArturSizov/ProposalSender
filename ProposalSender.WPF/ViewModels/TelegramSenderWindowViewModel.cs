@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using Microsoft.Win32;
 using System;
 using ProposalSender.Contracts.Implementations;
+using WTelegram;
 
 namespace ProposalSender.WPF.ViewModels
 {
@@ -65,8 +66,8 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand Connect => new DelegateCommand<string>(async(str) =>
         {
-            await send.Connect(User, $"+7{User.PhoneNumber}");
-            SetProperties();
+            var result = await send.Connect(User, $"+7{User.PhoneNumber}");
+            SetProperties((result.TaskIsEnabled, result.TaskLoginnInfo, result.TaskInfoMessage, result.TaskStatus));
             SaveProperties();
         });
 
@@ -75,12 +76,11 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand Disconnect => new DelegateCommand(() =>
         {
-            send.Disconnect();
-            send.IsEnabled = false;
+            var result = send.Disconnect();
             Phones.Clear();
             Message = "Введите текст сообщения...";
             SelectedIndex = 0;
-            SetProperties();
+            SetProperties((result.Enabled, string.Empty, string.Empty, result.Status));
         });
         /// <summary>
         /// Open link in browser command
@@ -95,9 +95,9 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand SendCode => new DelegateCommand<string>(async(str) =>
         {
-            await send.Connect(null, VerificationValue);
-            SetProperties();
+            var result = await send.Connect(User, VerificationValue);
             VerificationValue = string.Empty;
+            SetProperties((result.TaskIsEnabled, result.TaskLoginnInfo, result.TaskInfoMessage, result.TaskStatus));
 
         },(str)=> !string.IsNullOrWhiteSpace(str));
 
@@ -113,22 +113,25 @@ namespace ProposalSender.WPF.ViewModels
 
                 foreach (var phone in Phones)
                 {
-                    var res = await send.SendMessage(phone, Message);
+                    var result = await send.SendMessage(phone, Message);
 
-                    if(res)
+                    if (result.TaskErrorMessage != string.Empty)
+                    {
+                        MessageBox.Show(result.TaskErrorMessage, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+
+                    if (result.TaskIsSend)
                         countSent++;
-                    else 
+                    else
                         countUnsent++;
                 }
-                send.InfoMessage = $"Количество отправленных сообщений: {countSent}\nНомера не пользуются Telegram: {countUnsent}";
-
-                SetProperties(MessageBoxImage.Information);
+                MessageBox.Show($"Количество отправленных сообщений: {countSent}\nНомера не пользуются Telegram: {countUnsent}", "Telegram", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             else
             {
                 send.Disconnect();
-                send.InfoMessage = "Нет подключения к Интернету";
-                SetProperties(MessageBoxImage.Error);
+                MessageBox.Show("Нет подключения к Интернету", "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         });
 
@@ -211,22 +214,21 @@ namespace ProposalSender.WPF.ViewModels
                 }
             }
         }
-        private void SetProperties(MessageBoxImage mesImage = MessageBoxImage.Error)
+        private void SetProperties((bool isEnabled, string loginnInfo, string infoMessage, string status) result, MessageBoxImage mesImage = MessageBoxImage.Error)
         {
-           Status = send.Status;
-
-           LoginInfo = send.LoginInfo;
-
-           IsEnabled = send.IsEnabled;
+            IsEnabled = result.isEnabled;
+            LoginInfo = result.loginnInfo;
+            InfoMessage = result.infoMessage;
+            Status = result.status;
 
             if (LoginInfo != string.Empty && IsEnabled)
                 VerificationView = Visibility.Visible;
             else VerificationView = Visibility.Collapsed;
 
-            if (send.InfoMessage != null && send.InfoMessage != string.Empty)
+            if (InfoMessage != null && InfoMessage != string.Empty)
             {
-                MessageBox.Show(send.InfoMessage, "Telegram", MessageBoxButton.OK, mesImage);
-                send.InfoMessage = null;
+                MessageBox.Show(InfoMessage, "Telegram", MessageBoxButton.OK, mesImage);
+                InfoMessage = null;
             }
         }
         private void SaveProperties()
