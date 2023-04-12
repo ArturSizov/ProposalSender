@@ -3,10 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ProposalSender.WPF_ASP.Views"
-        mc:Ignorable="d"
         xmlns:converter="clr-namespace:ProposalSender.WPF_ASP.Services.Converters" 
         xmlns:components="clr-namespace:ProposalSender.WPF_ASP.CutsomControls.Components"
+        mc:Ignorable="d"
         DataContext="{Binding Source={StaticResource Locator}, Path=TelegramSenderWindowViewModel, UpdateSourceTrigger=PropertyChanged}"
         Title="{Binding Title}" 
         Height="650" 
@@ -19,6 +18,7 @@
         <converter:ButtonEnabledMConverter x:Key="ButtonEnabledMConverter"/>
         <converter:DeleteButtonEnabledConverter x:Key="DeleteButtonEnabledConverter"/>
     </Window.Resources>
+
 
     <Grid>
         <Grid.RowDefinitions>

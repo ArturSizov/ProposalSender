@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="6.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Prism.Core" Version="8.1.97" />
     <PackageReference Include="WTelegramClient" Version="3.3.3" />
   </ItemGroup>

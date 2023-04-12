@@ -6,7 +6,6 @@ namespace ProposalSender.WPF_ASP.Views.Locator
 {
     public class ViewModelLocator
     {
-        public TelegramSenderWindowViewModel TelegramSenderWindowViewModel => RootContainer.Container.Resolve<TelegramSenderWindowViewModel>();
-
+        public TelegramSenderWindowViewModel TelegramSenderWindowViewModel => RootContainer.Container.Resolve<TelegramSenderWindowViewModel>(); 
     }
 }

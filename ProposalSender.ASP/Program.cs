@@ -12,7 +12,8 @@ internal class Program
 
         //Add services
         builder.Services.AddSingleton<ISendTelegramMessages, SendTelegramMessages>();
-        //builder.Services.AddSingleton<IPersonData, PersonData>();
+        builder.Services.AddSingleton<ITMHttpClient, TMHttpClient>();
+
 
         var app = builder.Build();
 

@@ -11,13 +11,6 @@ namespace ProposalSender.Contracts.Implementations
         private Client? client;
         #endregion
 
-        #region Public property
-        public string LoginInfo { get; set; } = string.Empty;
-        public string Status { get; set; } = string.Empty;
-        public string InfoMessage { get; set; } = string.Empty;
-        public bool IsEnabled { get; set; }
-        #endregion
-
         #region Methods
         /// <summary>
         /// Connect method
@@ -25,43 +18,52 @@ namespace ProposalSender.Contracts.Implementations
         /// <param name="user"></param>
         /// <param name="verificationValue"></param>
         /// <returns></returns>
-        public async Task<Client> Connect(UserSender? user, string verificationValue)
+        public async Task<(bool TaskIsEnabled, string TaskLoginnInfo, string TaskInfoMessage, string TaskStatus)> 
+            Connect(UserSender? user, string verificationValue)
         {
+            string taskLoginnInfo = string.Empty;
+            string taskInfoMessage = string.Empty;
+            string taskStatus = string.Empty;
+            bool taskIsEnabled = false;
             try
             {
-                IsEnabled = true;
+                client ??= new Client(Convert.ToInt32(user?.ApiId), user?.ApiHash);
 
-                if (client == null)
-                    client = new Client(Convert.ToInt32(user.ApiId), user.ApiHash);
+                var result =  await DoLogin(verificationValue);
 
-                await DoLogin(verificationValue);
+                taskStatus = result.TaskStatus;
+                taskIsEnabled = result.TaskIsEnabled;
+                taskInfoMessage = result.TaskInfoMessage;
+                taskLoginnInfo = result.TaskLoginnInfo;
 
-                return client;
+                return (taskIsEnabled, taskInfoMessage, taskLoginnInfo, taskStatus);
             }
             catch
             {
-                IsEnabled = false;
-                InfoMessage = "Не верный API HASH";
-                return null;
+                taskIsEnabled = false;
+                taskInfoMessage = "Не верный API HASH";
+                return (taskIsEnabled, taskInfoMessage, taskLoginnInfo, taskStatus);
             }
         }
 
         /// <summary>
         /// Disconnect method
         /// </summary>
-        public void Disconnect()
+        public (string Status, bool Enabled) Disconnect()
         {
             client?.Reset(true, true);
-            IsEnabled = false;
-            Status = string.Empty;
+            return (string.Empty, false);
         }
 
         /// <summary>
         /// Message sending method
         /// </summary>
         /// <param name="message"></param>
-        public async Task<bool> SendMessage(long phone, string message = "App Send Telegram Messages")
+        public async Task<(bool TaskIsSend, string TaskErrorMessage)> SendMessage(long phone, string message = "App Send Telegram Messages")
         {
+            string taskErrorMessage = string.Empty;
+            bool taskIsSend = false;
+
             try
             {
                 var result = await client.Contacts_ImportContacts(new[] { new InputPhoneContact { phone = $"+7{phone}" } });
@@ -69,10 +71,10 @@ namespace ProposalSender.Contracts.Implementations
                 if (result.users.Count != 0)
                 {
                     await client.SendMessageAsync(result.users[result.imported[0].user_id], $"{message}");
-                    return true;
+                    taskIsSend = true;
                 }
-                else 
-                    return false;
+                else
+                    taskIsSend = false;
             }
 
             catch (Exception ex)
@@ -80,18 +82,22 @@ namespace ProposalSender.Contracts.Implementations
                 switch (ex.Message)
                 {
                     case "You must connect to Telegram first":
-                        InfoMessage = "Нет подключения к Telegram";
+                        taskErrorMessage = "Нет подключения к Telegram";
                         break;
                     default:
-                        InfoMessage = ex.Message;
+                        taskErrorMessage = ex.Message;
                         break;
                 }
-                return false;
             }
+            return (taskIsSend, taskErrorMessage);
         }
 
-        private async Task DoLogin(string loginInfo)
+        private async Task<(bool TaskIsEnabled, string TaskLoginnInfo, string TaskInfoMessage, string TaskStatus)> DoLogin(string loginInfo)
         {
+            string taskLoginnInfo = string.Empty;
+            string taskInfoMessage = string.Empty;
+            string taskStatus = string.Empty;
+            bool taskIsEnabled = true;
             try
             {
                 string what = await client.Login(loginInfo); 
@@ -101,55 +107,39 @@ namespace ProposalSender.Contracts.Implementations
                     switch (what)
                     {
                         case "verification_code":
-                            LoginInfo = "Код верификации:";
+                            taskLoginnInfo =  "Код верификации:";
                             break;
                         case "password":
-                            LoginInfo = "Пароль аккаунта:";
+                            taskLoginnInfo = "Пароль аккаунта:";
                             break;
                         default:
-                            LoginInfo = string.Empty;
+                            taskLoginnInfo = string.Empty;
                             break;
                     }
                 }
                 else
                 {
-                    LoginInfo = string.Empty;
-                    Status = $"Подключено как {client.User}";
-                    IsEnabled = true;
+                    taskInfoMessage = string.Empty;
+                    taskStatus = $"Подключено как {client.User}";
+                    taskIsEnabled = true;
                 }
             }
             catch (Exception ex)
             {
-                switch (ex.Message)
+                taskInfoMessage = ex.Message switch
                 {
-                    case "You must provide a config value for phone_number":
-                        InfoMessage = "Не указан номер телефона";
-                        break;
-                    case "Сделана попытка выполнить операцию на сокете для недоступного хоста.":
-                        InfoMessage = "Нет подключения к Интернету";
-                        break;
-                    case "API_ID_INVALID":
-                        InfoMessage = "Не верный API ID";
-                        break;
-                    case "PHONE_CODE_INVALID":
-                        InfoMessage = "Не верный код верификации";
-                        break;
-                    case "FLOOD_WAIT_X":
-                        InfoMessage = "Аккаунт временно заблокирован";
-                        break;
-                    case "PHONE_NUMBER_INVALID":
-                        InfoMessage = "Не верный номер телефона";
-                        break;
-                    case "PHONE_NUMBER_BANNED":
-                        InfoMessage = "Номер телефона заблокирован";
-                        break;
-                    default:
-                        InfoMessage = ex.Message;
-                        break;
-                }
-
+                    "You must provide a config value for phone_number" => "Не указан номер телефона",
+                    "Сделана попытка выполнить операцию на сокете для недоступного хоста." => "Нет подключения к Интернету",
+                    "API_ID_INVALID" => "Не верный API ID",
+                    "PHONE_CODE_INVALID" => "Не верный код верификации",
+                    "FLOOD_WAIT_X" => "Аккаунт временно заблокирован",
+                    "PHONE_NUMBER_INVALID" => "Не верный номер телефона",
+                    "PHONE_NUMBER_BANNED" => "Номер телефона заблокирован",
+                    _ => ex.Message,
+                };
                 Disconnect();
             }
+            return (taskIsEnabled, taskInfoMessage, taskLoginnInfo, taskStatus);
         }
         #endregion
     }

@@ -95,7 +95,7 @@ namespace ProposalSender.WPF.ViewModels
         /// </summary>
         public ICommand SendCode => new DelegateCommand<string>(async(str) =>
         {
-            await send.Connect(User, VerificationValue);
+            await send.Connect(null, VerificationValue);
             SetProperties();
             VerificationValue = string.Empty;
 
@@ -223,7 +223,7 @@ namespace ProposalSender.WPF.ViewModels
                 VerificationView = Visibility.Visible;
             else VerificationView = Visibility.Collapsed;
 
-            if (send.InfoMessage != null)
+            if (send.InfoMessage != null && send.InfoMessage != string.Empty)
             {
                 MessageBox.Show(send.InfoMessage, "Telegram", MessageBoxButton.OK, mesImage);
                 send.InfoMessage = null;

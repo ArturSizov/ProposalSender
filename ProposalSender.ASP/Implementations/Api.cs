@@ -1,6 +1,5 @@
 ﻿using ProposalSender.Contracts.Interfaces;
 using ProposalSender.Contracts.Models;
-using System.Collections.ObjectModel;
 
 namespace ProposalSender.ASP.Implementations
 {
@@ -16,13 +15,15 @@ namespace ProposalSender.ASP.Implementations
 
         private static async Task<IResult>Connect(ISendTelegramMessages send, UserSender user)
         {
+            var result = await send.Connect(user, $"+7{user.PhoneNumber}");
+
             try
             {
-                return Results.Ok(await send.Connect(user, $"+7{user.PhoneNumber}"));
+                return Results.Ok(result);
             }
             catch
             {
-                return Results.Problem(send.InfoMessage);
+                return Results.Problem(result.TaskInfoMessage);
             }
         }
 
@@ -34,7 +35,7 @@ namespace ProposalSender.ASP.Implementations
             }
             catch
             {
-                return Results.Problem(send.InfoMessage);
+                return Results.Problem();
             }
         }
 
@@ -46,8 +47,8 @@ namespace ProposalSender.ASP.Implementations
                 return Results.Ok();
             }
             catch 
-            { 
-                return Results.Problem(send.InfoMessage); 
+            {
+                return Results.Problem();
             }
         }
 
@@ -59,8 +60,8 @@ namespace ProposalSender.ASP.Implementations
                 return Results.Ok();
             }
             catch 
-            { 
-                return Results.Problem(send.InfoMessage); 
+            {
+                return Results.Problem();
             }
         }  
     }

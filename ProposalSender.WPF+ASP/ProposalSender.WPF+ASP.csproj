@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ProposalSender.ASP\ProposalSender.ASP.csproj" />
     <ProjectReference Include="..\ProposalSender.Contracts\ProposalSender.Contracts.csproj" />
   </ItemGroup>
 
