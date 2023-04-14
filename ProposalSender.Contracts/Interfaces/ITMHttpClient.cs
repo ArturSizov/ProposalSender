@@ -8,7 +8,7 @@ namespace ProposalSender.Contracts.Interfaces
         string Status { get; set; }
         public bool IsEnabled { get; set; }
         string InfoMessage { get; set; }
-        Task Connect(UserSender? user, string verificationValue);
+        Task<(bool isEnabled, string loginInfo, string infoMessage, string status)> Connect(UserSender? user, string verificationValue);
         Task SenCode(string verificationValue);
         Task SendMessage(long phone, string message);
         Task Disconnect();

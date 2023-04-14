@@ -2,6 +2,7 @@
 using ProposalSender.Contracts.Interfaces;
 using ProposalSender.Contracts.Models;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Text;
 
 namespace ProposalSender.Contracts.Implementations
@@ -9,7 +10,6 @@ namespace ProposalSender.Contracts.Implementations
     public class TMHttpClient : ITMHttpClient
     {
         #region Private property
-        private ISendTelegramMessages send;
         private HttpClient client;
         private string url = "https://localhost:7154/phones";
         #endregion
@@ -21,9 +21,8 @@ namespace ProposalSender.Contracts.Implementations
         public bool IsEnabled { get; set; }
         #endregion
 
-        public TMHttpClient(ISendTelegramMessages send)
+        public TMHttpClient()
         {
-            this.send = send;
             client = new HttpClient();
             client.BaseAddress = new Uri(url);
             client.DefaultRequestHeaders.Accept.Clear();
@@ -31,11 +30,13 @@ namespace ProposalSender.Contracts.Implementations
         }
 
         #region Methods
-        public async Task Connect(UserSender? user, string verificationValue)
+        public async Task<(bool isEnabled, string loginInfo, string infoMessage, string status)> Connect(UserSender? user, string verificationValue)
         {
             var json = JsonConvert.SerializeObject(user);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
-            await client.PostAsync($"{url}/connect", data);
+            var response = await client.PostAsync($"{url}/connect", data).Result.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<(bool, string, string, string)>(response);
+            return (result.Item1, result.Item2, result.Item3, result.Item4);
         }
 
         public async Task Disconnect()
@@ -48,17 +49,11 @@ namespace ProposalSender.Contracts.Implementations
             var json = JsonConvert.SerializeObject(verificationValue);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
             await client.PostAsync($"{url}/sendcode", data);
-            SetProperty();
         }
 
         public async Task SendMessage(long phone, string message)
         {
             await client.PostAsync($"{url}/sendmessage?phone={phone}&message={message}", null);
-            SetProperty();
-        }
-
-        private void SetProperty()
-        {
         }
         #endregion
     }

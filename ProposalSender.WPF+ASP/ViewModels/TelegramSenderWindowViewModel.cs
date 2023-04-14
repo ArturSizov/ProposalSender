@@ -15,7 +15,8 @@ namespace ProposalSender.WPF_ASP.ViewModels
     public class TelegramSenderWindowViewModel : BindableBase
     {
         #region Private property
-        private ISendTelegramMessages client;
+        private ITMHttpClient client;
+        private readonly ISendTelegramMessages send;
         private IPhoneBase phoneBase;
         private Visibility verificationView = Visibility.Collapsed;
         private string message = "Введите текст сообщения...";
@@ -45,9 +46,10 @@ namespace ProposalSender.WPF_ASP.ViewModels
 
         #endregion
 
-        public TelegramSenderWindowViewModel(ISendTelegramMessages client, IPhoneBase phoneBase)
+        public TelegramSenderWindowViewModel(ITMHttpClient client, ISendTelegramMessages send, IPhoneBase phoneBase)
         {
             this.client = client;
+            this.send = send;
             this.phoneBase = phoneBase;
 
             User = new UserSender
@@ -65,7 +67,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
         public ICommand Connect => new DelegateCommand<string>(async(str) =>
         {
             var result = await client.Connect(User, $"+7{User.PhoneNumber}");
-            SetProperties((result.TaskIsEnabled, result.TaskLoginnInfo, result.TaskInfoMessage, result.TaskStatus));
+            SetProperties((result.isEnabled, result.loginInfo, result.infoMessage, result.status));
             SaveProperties();
         });
 
@@ -78,7 +80,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
             Phones.Clear();
             Message = "Введите текст сообщения...";
             SelectedIndex = 0;
-            SetProperties((result.Enabled, string.Empty, string.Empty, result.Status));
+            //SetProperties((result.Enabled, string.Empty, string.Empty, result.Status));
         });
         /// <summary>
         /// Open link in browser command
@@ -93,9 +95,9 @@ namespace ProposalSender.WPF_ASP.ViewModels
         /// </summary>
         public ICommand SendCode => new DelegateCommand<string>(async (str) =>
         {
-            var result = await client.Connect(User, VerificationValue);
+            await client.Connect(User, VerificationValue);
             VerificationValue = string.Empty;
-            SetProperties((result.TaskIsEnabled, result.TaskLoginnInfo, result.TaskInfoMessage, result.TaskStatus));
+            //SetProperties((result.TaskIsEnabled, result.TaskLoginnInfo, result.TaskInfoMessage, result.TaskStatus));
 
         }, (str) => !string.IsNullOrWhiteSpace(str));
 
@@ -111,18 +113,18 @@ namespace ProposalSender.WPF_ASP.ViewModels
 
                 foreach (var phone in Phones)
                 {
-                   var result = await client.SendMessage(phone, Message);
+                   //var result = await client.SendMessage(phone, Message);
 
-                    if(result.TaskErrorMessage != string.Empty)
-                    {
-                        MessageBox.Show(result.TaskErrorMessage, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
+                    //if(result.TaskErrorMessage != string.Empty)
+                    //{
+                    //    MessageBox.Show(result.TaskErrorMessage, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
+                    //    return;
+                    //}
 
-                    if (result.TaskIsSend)
-                        countSent++;
-                    else
-                        countUnsent++;
+                    //if (result.TaskIsSend)
+                    //    countSent++;
+                    //else
+                    //    countUnsent++;
                 }
                 MessageBox.Show($"Количество отправленных сообщений: {countSent}\nНомера не пользуются Telegram: {countUnsent}", "Telegram", MessageBoxButton.OK, MessageBoxImage.Information);
             }

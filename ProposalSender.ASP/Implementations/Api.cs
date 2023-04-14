@@ -11,15 +11,15 @@ namespace ProposalSender.ASP.Implementations
             app.MapPost("/phones/sendcode/", SendCode);
             app.MapPost("/phones/sendmessage", SendMessage);
             app.MapPost("/phones/disconnect", Disconnect);
+  
         }
 
         private static async Task<IResult>Connect(ISendTelegramMessages send, UserSender user)
         {
             var result = await send.Connect(user, $"+7{user.PhoneNumber}");
-
             try
-            {
-                return Results.Ok(result);
+            {               
+                return Results.Ok(result.ToTuple());
             }
             catch
             {
@@ -29,39 +29,41 @@ namespace ProposalSender.ASP.Implementations
 
         private static async Task<IResult> SendCode(ISendTelegramMessages send, string verificationValue)
         {
+            var result = await send.Connect(null, verificationValue);
             try
             {
-                return Results.Ok(await send.Connect(null, verificationValue));
+                
+                return Results.Ok(result);
             }
             catch
             {
-                return Results.Problem();
+                return Results.Problem(result.TaskInfoMessage);
             }
         }
 
         private static async Task<IResult>SendMessage(ISendTelegramMessages send, long phone, string message)
         {
+            var result = await send.SendMessage(phone, message);
             try
             {
-                await send.SendMessage(phone, message);
-                return Results.Ok();
+                return Results.Ok(result);
             }
             catch 
             {
-                return Results.Problem();
+                return Results.Problem(result.TaskErrorMessage);
             }
         }
 
         private static IResult Disconnect(ISendTelegramMessages send)
         {
+            var result = send.Disconnect();
             try
-            {
-                send.Disconnect();
-                return Results.Ok();
+            { 
+                return Results.Ok(result);
             }
             catch 
             {
-                return Results.Problem();
+                return Results.Problem(result.Status);
             }
         }  
     }
