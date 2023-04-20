@@ -45,7 +45,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
 
         #endregion
 
-        public TelegramSenderWindowViewModel(ITMHttpClient client, ISendTelegramMessages send, IPhoneBase phoneBase)
+        public TelegramSenderWindowViewModel(ITMHttpClient client, IPhoneBase phoneBase)
         {
             this.client = client;
             this.phoneBase = phoneBase;
@@ -111,18 +111,18 @@ namespace ProposalSender.WPF_ASP.ViewModels
 
                 foreach (var phone in Phones)
                 {
-                   //var result = await client.SendMessage(phone, Message);
+                    var result = await client.SendMessageAsync(phone, Message);
 
-                    //if(result.TaskErrorMessage != string.Empty)
-                    //{
-                    //    MessageBox.Show(result.TaskErrorMessage, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
-                    //    return;
-                    //}
+                    if (result.errorMessage != string.Empty)
+                    {
+                        MessageBox.Show(result.errorMessage, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
 
-                    //if (result.TaskIsSend)
-                    //    countSent++;
-                    //else
-                    //    countUnsent++;
+                    if (result.isSend)
+                        countSent++;
+                    else
+                        countUnsent++;
                 }
                 MessageBox.Show($"Количество отправленных сообщений: {countSent}\nНомера не пользуются Telegram: {countUnsent}", "Telegram", MessageBoxButton.OK, MessageBoxImage.Information);
             }

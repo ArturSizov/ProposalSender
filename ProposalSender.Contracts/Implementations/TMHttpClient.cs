@@ -56,9 +56,17 @@ namespace ProposalSender.Contracts.Implementations
             return (result.Item1, result.Item2, result.Item3, result.Item4);
         }
 
-        public async Task SendMessageAsync(long phone, string message)
+        /// <summary>
+        /// Message sending method
+        /// </summary>
+        /// <param name="phone"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public async Task<(bool isSend, string errorMessage)> SendMessageAsync(long phone, string message)
         {
-            await client.PostAsync($"{url}/sendmessage?phone={phone}&message={message}", null);
+            var response = await client.PostAsync($"{url}/sendmessage?phone={phone}&message={message}", null).Result.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<(bool, string)>(response);
+            return (result.Item1, result.Item2);
         }
 
         /// <summary>

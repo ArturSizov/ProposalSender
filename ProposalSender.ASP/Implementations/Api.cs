@@ -15,7 +15,7 @@ namespace ProposalSender.ASP.Implementations
 
         private static async Task<IResult>ConnectAsync(ISendTelegramMessages send, UserSender user)
         {
-            var result = await send.Connect(user, $"+7{user.PhoneNumber}");
+            var result = await send.ConnectAsync(user, $"+7{user.PhoneNumber}");
             try
             {               
                 return Results.Ok(result.ToTuple());
@@ -28,7 +28,7 @@ namespace ProposalSender.ASP.Implementations
 
         private static async Task<IResult> SendCodeAsync(ISendTelegramMessages send, string verificationValue)
         {
-            var result = await send.Connect(null, verificationValue);
+            var result = await send.ConnectAsync(null, verificationValue);
             try
             {
                 return Results.Ok(result.ToTuple());
@@ -41,7 +41,7 @@ namespace ProposalSender.ASP.Implementations
 
         private static async Task<IResult> SendMessageAsync(ISendTelegramMessages send, long phone, string message)
         {
-            var result = await send.SendMessage(phone, message);
+            var result = await send.SendMessageAsync(phone, message);
             try
             {
                 return Results.Ok(result.ToTuple());
@@ -54,7 +54,7 @@ namespace ProposalSender.ASP.Implementations
 
         private static async Task<IResult> DisconnectAsync(ISendTelegramMessages send)
         {
-            var result = await send.Disconnect();
+            var result = await send.DisconnectAsync();
             try
             { 
                 return Results.Ok(result.ToTuple());

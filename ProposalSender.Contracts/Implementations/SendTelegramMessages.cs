@@ -29,7 +29,7 @@ namespace ProposalSender.Contracts.Implementations
             {
                 client ??= new Client(Convert.ToInt32(user?.ApiId), user?.ApiHash);
 
-                var result =  await DoLogin(verificationValue);
+                var result =  await DoLoginAsync(verificationValue);
 
                 status = result.status;
                 isEnabled = result.isEnabled;
@@ -137,7 +137,7 @@ namespace ProposalSender.Contracts.Implementations
                     "PHONE_NUMBER_BANNED" => "Номер телефона заблокирован",
                     _ => ex.Message,
                 };
-                Disconnect();
+                await DisconnectAsync();
             }
             return (taskIsEnabled, taskInfoMessage, taskLoginnInfo, taskStatus);
         }
