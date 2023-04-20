@@ -16,14 +16,13 @@ namespace ProposalSender.WPF_ASP.ViewModels
     {
         #region Private property
         private ITMHttpClient client;
-        private readonly ISendTelegramMessages send;
         private IPhoneBase phoneBase;
         private Visibility verificationView = Visibility.Collapsed;
         private string message = "Введите текст сообщения...";
-        private string loginInfo;
-        private string verificationValue;
-        private string status;
-        private string infoMessage;
+        private string? loginInfo;
+        private string? verificationValue;
+        private string? status;
+        private string? infoMessage;
         private bool isEnabled = false;
         private ObservableCollection<long> phones = new();
         private bool installationStatusApp;
@@ -35,10 +34,10 @@ namespace ProposalSender.WPF_ASP.ViewModels
         public ObservableCollection<long> Phones { get => phones; set => SetProperty(ref phones, value); }
         public UserSender User { get; set; } = new();
         public string Message { get => message; set => SetProperty(ref message, value); }
-        public string VerificationValue { get => verificationValue; set => SetProperty(ref verificationValue, value); }
-        public string LoginInfo { get => loginInfo; set => SetProperty(ref loginInfo, value); }
-        public string Status { get => status; set => SetProperty(ref status, value); }
-        public string InfoMessage { get => infoMessage; set => SetProperty(ref infoMessage, value); }
+        public string VerificationValue { get => verificationValue!; set => SetProperty(ref verificationValue, value); }
+        public string LoginInfo { get => loginInfo!; set => SetProperty(ref loginInfo, value); }
+        public string Status { get => status!; set => SetProperty(ref status, value); }
+        public string InfoMessage { get => infoMessage!; set => SetProperty(ref infoMessage, value); }
         public bool IsEnabled { get => isEnabled; set => SetProperty(ref isEnabled, value); }
         public Visibility VerificationView { get => verificationView; set => SetProperty(ref verificationView, value); }
         public bool InstallationStatusApp { get => installationStatusApp; set => SetProperty(ref installationStatusApp, value); }
@@ -49,7 +48,6 @@ namespace ProposalSender.WPF_ASP.ViewModels
         public TelegramSenderWindowViewModel(ITMHttpClient client, ISendTelegramMessages send, IPhoneBase phoneBase)
         {
             this.client = client;
-            this.send = send;
             this.phoneBase = phoneBase;
 
             User = new UserSender
@@ -64,9 +62,9 @@ namespace ProposalSender.WPF_ASP.ViewModels
         /// <summary>
         /// Connect command
         /// </summary>
-        public ICommand Connect => new DelegateCommand<string>(async(str) =>
+        public ICommand ConnectAsync => new DelegateCommand<string>(async(str) =>
         {
-            var result = await client.Connect(User, $"+7{User.PhoneNumber}");
+            var result = await client.ConnectAsync(User, $"+7{User.PhoneNumber}");
             SetProperties((result.isEnabled, result.loginInfo, result.infoMessage, result.status));
             SaveProperties();
         });
@@ -74,13 +72,13 @@ namespace ProposalSender.WPF_ASP.ViewModels
         /// <summary>
         /// Disconnect command
         /// </summary>
-        public ICommand Disconnect => new DelegateCommand(() =>
+        public ICommand DisconnectAsync => new DelegateCommand(async() =>
         {
-            var result = client.Disconnect();
+            var result = await client.DisconnectAsync();
             Phones.Clear();
             Message = "Введите текст сообщения...";
             SelectedIndex = 0;
-            //SetProperties((result.Enabled, string.Empty, string.Empty, result.Status));
+            SetProperties((result.isEnabled, string.Empty, string.Empty, result.status));
         });
         /// <summary>
         /// Open link in browser command
@@ -93,18 +91,18 @@ namespace ProposalSender.WPF_ASP.ViewModels
         /// <summary>
         /// Connect to Telegramm command
         /// </summary>
-        public ICommand SendCode => new DelegateCommand<string>(async (str) =>
+        public ICommand SendCodeAsync => new DelegateCommand<string>(async(str) =>
         {
-            await client.Connect(User, VerificationValue);
+            var result = await client.SenCodeAsync(VerificationValue);
             VerificationValue = string.Empty;
-            //SetProperties((result.TaskIsEnabled, result.TaskLoginnInfo, result.TaskInfoMessage, result.TaskStatus));
+            SetProperties((result.isEnabled, result.loginInfo, result.infoMessage, result.status));
 
         }, (str) => !string.IsNullOrWhiteSpace(str));
 
         /// <summary>
         /// Send Message command
         /// </summary>
-        public ICommand SendMessage => new DelegateCommand(async () =>
+        public ICommand SendMessageAsync => new DelegateCommand(async () =>
         {
             if (PingInternet())
             {
@@ -130,7 +128,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
             }
             else
             {
-                client.Disconnect();
+                await client.DisconnectAsync();
                 MessageBox.Show("Нет подключения к Интернету", "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         });
@@ -228,7 +226,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
             if (InfoMessage != null && InfoMessage != string.Empty)
             {
                 MessageBox.Show(InfoMessage, "Telegram", MessageBoxButton.OK, mesImage);
-                InfoMessage = null;
+                InfoMessage = string.Empty;
             }
         }
         private void SaveProperties()

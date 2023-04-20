@@ -7,14 +7,13 @@ namespace ProposalSender.ASP.Implementations
     {
         public static void ConfigureApi(this WebApplication app)
         {
-            app.MapPost("/phones/connect", Connect);
-            app.MapPost("/phones/sendcode/", SendCode);
-            app.MapPost("/phones/sendmessage", SendMessage);
-            app.MapPost("/phones/disconnect", Disconnect);
-  
+            app.MapPost("/phones/connect", ConnectAsync);
+            app.MapPost("/phones/sendcode/", SendCodeAsync);
+            app.MapPost("/phones/sendmessage", SendMessageAsync);
+            app.MapPost("/phones/disconnect", DisconnectAsync);
         }
 
-        private static async Task<IResult>Connect(ISendTelegramMessages send, UserSender user)
+        private static async Task<IResult>ConnectAsync(ISendTelegramMessages send, UserSender user)
         {
             var result = await send.Connect(user, $"+7{user.PhoneNumber}");
             try
@@ -23,47 +22,46 @@ namespace ProposalSender.ASP.Implementations
             }
             catch
             {
-                return Results.Problem(result.TaskInfoMessage);
+                return Results.Problem(result.infoMessage);
             }
         }
 
-        private static async Task<IResult> SendCode(ISendTelegramMessages send, string verificationValue)
+        private static async Task<IResult> SendCodeAsync(ISendTelegramMessages send, string verificationValue)
         {
             var result = await send.Connect(null, verificationValue);
             try
             {
-                
-                return Results.Ok(result);
+                return Results.Ok(result.ToTuple());
             }
             catch
             {
-                return Results.Problem(result.TaskInfoMessage);
+                return Results.Problem(result.infoMessage);
             }
         }
 
-        private static async Task<IResult>SendMessage(ISendTelegramMessages send, long phone, string message)
+        private static async Task<IResult> SendMessageAsync(ISendTelegramMessages send, long phone, string message)
         {
             var result = await send.SendMessage(phone, message);
             try
             {
-                return Results.Ok(result);
+                return Results.Ok(result.ToTuple());
             }
             catch 
             {
-                return Results.Problem(result.TaskErrorMessage);
+                return Results.Problem(result.errorMessage);
             }
         }
 
-        private static IResult Disconnect(ISendTelegramMessages send)
+        private static async Task<IResult> DisconnectAsync(ISendTelegramMessages send)
         {
-            var result = send.Disconnect();
+            var result = await send.Disconnect();
             try
             { 
-                return Results.Ok(result);
+                return Results.Ok(result.ToTuple());
             }
             catch 
             {
-                return Results.Problem(result.Status);
+                return Results.Problem(result.status);
             }
         }  
     }

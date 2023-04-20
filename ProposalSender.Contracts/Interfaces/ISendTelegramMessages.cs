@@ -4,8 +4,8 @@ namespace ProposalSender.Contracts.Interfaces
 {
     public interface ISendTelegramMessages
     {
-        Task<(bool TaskIsEnabled, string TaskLoginnInfo, string TaskInfoMessage, string TaskStatus)> Connect(UserSender? user, string verificationValue);
-        Task<(bool TaskIsSend, string TaskErrorMessage)> SendMessage(long phone, string message = "App Send Telegram Messages");
-        (string Status, bool Enabled) Disconnect();
+        Task<(bool isEnabled, string loginnInfo, string infoMessage, string status)> ConnectAsync(UserSender? user, string verificationValue);
+        Task<(bool isSend, string errorMessage)> SendMessageAsync(long phone, string message = "App Send Telegram Messages");
+        Task<(string status, bool enabled)> DisconnectAsync();
     }
 }

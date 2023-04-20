@@ -18,40 +18,40 @@ namespace ProposalSender.Contracts.Implementations
         /// <param name="user"></param>
         /// <param name="verificationValue"></param>
         /// <returns></returns>
-        public async Task<(bool TaskIsEnabled, string TaskLoginnInfo, string TaskInfoMessage, string TaskStatus)> 
-            Connect(UserSender? user, string verificationValue)
+        public async Task<(bool isEnabled, string loginnInfo, string infoMessage, string status)>
+            ConnectAsync(UserSender? user, string verificationValue)
         {
-            string taskLoginnInfo = string.Empty;
-            string taskInfoMessage = string.Empty;
-            string taskStatus = string.Empty;
-            bool taskIsEnabled = false;
+            string loginInfo = string.Empty;
+            string infoMessage = string.Empty;
+            string status = string.Empty;
+            bool isEnabled = false;
             try
             {
                 client ??= new Client(Convert.ToInt32(user?.ApiId), user?.ApiHash);
 
                 var result =  await DoLogin(verificationValue);
 
-                taskStatus = result.TaskStatus;
-                taskIsEnabled = result.TaskIsEnabled;
-                taskInfoMessage = result.TaskInfoMessage;
-                taskLoginnInfo = result.TaskLoginnInfo;
+                status = result.status;
+                isEnabled = result.isEnabled;
+                infoMessage = result.infoMessage;
+                loginInfo = result.loginInfo;
 
-                return (taskIsEnabled, taskInfoMessage, taskLoginnInfo, taskStatus);
+                return (isEnabled, infoMessage, loginInfo, status);
             }
             catch
             {
-                taskIsEnabled = false;
-                taskInfoMessage = "Не верный API HASH";
-                return (taskIsEnabled, taskInfoMessage, taskLoginnInfo, taskStatus);
+                isEnabled = false;
+                infoMessage = "Не верный API HASH";
+                return (isEnabled, infoMessage, loginInfo, status);
             }
         }
 
         /// <summary>
         /// Disconnect method
         /// </summary>
-        public (string Status, bool Enabled) Disconnect()
+        public async Task<(string status, bool enabled)> DisconnectAsync()
         {
-            client?.Reset(true, true);
+            await Task.Run(()=> client?.Reset());
             return (string.Empty, false);
         }
 
@@ -59,10 +59,10 @@ namespace ProposalSender.Contracts.Implementations
         /// Message sending method
         /// </summary>
         /// <param name="message"></param>
-        public async Task<(bool TaskIsSend, string TaskErrorMessage)> SendMessage(long phone, string message = "App Send Telegram Messages")
+        public async Task<(bool isSend, string errorMessage)> SendMessageAsync(long phone, string message = "App Send Telegram Messages")
         {
-            string taskErrorMessage = string.Empty;
-            bool taskIsSend = false;
+            string errorMessage = string.Empty;
+            bool isSend = false;
 
             try
             {
@@ -71,10 +71,10 @@ namespace ProposalSender.Contracts.Implementations
                 if (result.users.Count != 0)
                 {
                     await client.SendMessageAsync(result.users[result.imported[0].user_id], $"{message}");
-                    taskIsSend = true;
+                    isSend = true;
                 }
                 else
-                    taskIsSend = false;
+                    isSend = false;
             }
 
             catch (Exception ex)
@@ -82,17 +82,17 @@ namespace ProposalSender.Contracts.Implementations
                 switch (ex.Message)
                 {
                     case "You must connect to Telegram first":
-                        taskErrorMessage = "Нет подключения к Telegram";
+                        errorMessage = "Нет подключения к Telegram";
                         break;
                     default:
-                        taskErrorMessage = ex.Message;
+                        errorMessage = ex.Message;
                         break;
                 }
             }
-            return (taskIsSend, taskErrorMessage);
+            return (isSend, errorMessage);
         }
 
-        private async Task<(bool TaskIsEnabled, string TaskLoginnInfo, string TaskInfoMessage, string TaskStatus)> DoLogin(string loginInfo)
+        private async Task<(bool isEnabled, string loginInfo, string infoMessage, string status)> DoLoginAsync(string loginInfo)
         {
             string taskLoginnInfo = string.Empty;
             string taskInfoMessage = string.Empty;
