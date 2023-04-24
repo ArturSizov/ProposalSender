@@ -9,6 +9,7 @@ using ProposalSender.Contracts.Models;
 using Prism.Mvvm;
 using ProposalSender.Contracts.Interfaces;
 using Microsoft.Win32;
+using System.Threading.Tasks;
 
 namespace ProposalSender.WPF_ASP.ViewModels
 {
@@ -246,5 +247,10 @@ namespace ProposalSender.WPF_ASP.ViewModels
                 return false;
         }
         #endregion
-    }
+
+        public async Task Method()
+        {
+            
+        }
+    } 
 }

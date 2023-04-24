@@ -18,11 +18,11 @@ namespace ProposalSender.Contracts.Implementations
         /// <param name="user"></param>
         /// <param name="verificationValue"></param>
         /// <returns></returns>
-        public async Task<(bool isEnabled, string loginnInfo, string infoMessage, string status)>
+        public async Task<(bool isEnabled, string loginInfo, string infoMessage, string status)>
             ConnectAsync(UserSender? user, string verificationValue)
         {
             string loginInfo = string.Empty;
-            string infoMessage = string.Empty;
+            string infoMessage;
             string status = string.Empty;
             bool isEnabled = false;
             try
@@ -94,10 +94,10 @@ namespace ProposalSender.Contracts.Implementations
 
         private async Task<(bool isEnabled, string loginInfo, string infoMessage, string status)> DoLoginAsync(string loginInfo)
         {
-            string taskLoginnInfo = string.Empty;
-            string taskInfoMessage = string.Empty;
-            string taskStatus = string.Empty;
-            bool taskIsEnabled = true;
+            string loginnInfo = string.Empty;
+            string infoMessage = string.Empty;
+            string status = string.Empty;
+            bool isEnabled = true;
             try
             {
                 string what = await client.Login(loginInfo); 
@@ -107,26 +107,26 @@ namespace ProposalSender.Contracts.Implementations
                     switch (what)
                     {
                         case "verification_code":
-                            taskLoginnInfo =  "Код верификации:";
+                            loginnInfo =  "Код верификации:";
                             break;
                         case "password":
-                            taskLoginnInfo = "Пароль аккаунта:";
+                            loginnInfo = "Пароль аккаунта:";
                             break;
                         default:
-                            taskLoginnInfo = string.Empty;
+                            loginnInfo = string.Empty;
                             break;
                     }
                 }
                 else
                 {
-                    taskInfoMessage = string.Empty;
-                    taskStatus = $"Подключено как {client.User}";
-                    taskIsEnabled = true;
+                    infoMessage = string.Empty;
+                    status = $"Подключено как {client.User}";
+                    isEnabled = true;
                 }
             }
             catch (Exception ex)
             {
-                taskInfoMessage = ex.Message switch
+                infoMessage = ex.Message switch
                 {
                     "You must provide a config value for phone_number" => "Не указан номер телефона",
                     "Сделана попытка выполнить операцию на сокете для недоступного хоста." => "Нет подключения к Интернету",
@@ -139,8 +139,10 @@ namespace ProposalSender.Contracts.Implementations
                 };
                 await DisconnectAsync();
             }
-            return (taskIsEnabled, taskInfoMessage, taskLoginnInfo, taskStatus);
+            return (isEnabled, infoMessage, loginnInfo, status);
         }
         #endregion
+
+
     }
 }
