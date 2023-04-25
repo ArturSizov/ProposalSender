@@ -1,33 +1,23 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Prism.Ioc;
 using ProposalSender.Contracts.Implementations;
 using ProposalSender.Contracts.Interfaces;
-using ProposalSender.WPF_ASP.Infrastructure;
-using ProposalSender.WPF_ASP.ViewModels;
-using System;
+using ProposalSender.WPF_ASP.Views;
 using System.Windows;
-using Unity;
 
 namespace ProposalSender.WPF_ASP
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App
     {
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
+        protected override Window CreateShell() => Container.Resolve<TelegramSenderWindow>();
 
-            ConfigureIOC();
-        }
-
-        private static void ConfigureIOC()
+        protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            RootContainer.Container.RegisterSingleton<TelegramSenderWindowViewModel, TelegramSenderWindowViewModel>();
-            RootContainer.Container.RegisterSingleton<ITMHttpClient, TMHttpClient>();
-            RootContainer.Container.RegisterSingleton<ISendTelegramMessages, SendTelegramMessages>();
-            RootContainer.Container.RegisterSingleton<IPhoneBase, PhoneBase>();
-            RootContainer.Container.RegisterSingleton<IExelManager, ExelManager>();
+            containerRegistry.Register<ITMHttpClient, TMHttpClient>();
+            containerRegistry.Register<IPhoneBase, PhoneBase>();
+            containerRegistry.Register<IExelManager, ExelManager>();
         }
     }
 }

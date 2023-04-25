@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Prism.Core" Version="8.1.97" />
-    <PackageReference Include="Unity" Version="5.11.9" />
+    <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
+    <PackageReference Include="Prism.Microsoft.DependencyInjection.Extensions" Version="8.0.62" />
   </ItemGroup>
 
   <ItemGroup>

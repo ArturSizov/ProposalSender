@@ -63,7 +63,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
         /// <summary>
         /// Connect command
         /// </summary>
-        public ICommand ConnectAsync => new DelegateCommand<string>(async(str) =>
+        public ICommand ConnectCommandAsync => new DelegateCommand<string>(async(str) =>
         {
             var result = await client.ConnectAsync(User, $"+7{User.PhoneNumber}");
             SetProperties((result.isEnabled, result.loginInfo, result.infoMessage, result.status));
@@ -73,7 +73,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
         /// <summary>
         /// Disconnect command
         /// </summary>
-        public ICommand DisconnectAsync => new DelegateCommand(async() =>
+        public ICommand DisconnectCommandAsync => new DelegateCommand(async() =>
         {
             var result = await client.DisconnectAsync();
             Phones.Clear();
@@ -92,7 +92,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
         /// <summary>
         /// Connect to Telegramm command
         /// </summary>
-        public ICommand SendCodeAsync => new DelegateCommand<string>(async(str) =>
+        public ICommand SendCodeCommandAsync => new DelegateCommand<string>(async(str) =>
         {
             var result = await client.SenCodeAsync(VerificationValue);
             VerificationValue = string.Empty;
@@ -103,7 +103,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
         /// <summary>
         /// Send Message command
         /// </summary>
-        public ICommand SendMessageAsync => new DelegateCommand(async () =>
+        public ICommand SendMessageCommandAsync => new DelegateCommand(async () =>
         {
             if (PingInternet())
             {
@@ -137,7 +137,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
         /// <summary>
         /// Delete one phone number command
         /// </summary>
-        public ICommand DeleteOnePhone => new DelegateCommand<object>((obj) =>
+        public ICommand DeleteOnePhoneCommand => new DelegateCommand<object>((obj) =>
         {
             Phones.Remove((long)obj);
             RaisePropertyChanged(nameof(Phones));
@@ -146,7 +146,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
         /// <summary>
         /// Delete all phone numbers command
         /// </summary>
-        public ICommand DeletAllPhones => new DelegateCommand(() =>
+        public ICommand DeletAllPhonesCommand => new DelegateCommand(() =>
         {
             Phones.Clear();
             RaisePropertyChanged(nameof(Phones));
@@ -155,7 +155,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
         /// <summary>
         /// Add one phone number command
         /// </summary>
-        public ICommand AddOnePhoneNumber => new DelegateCommand(() =>
+        public ICommand AddOnePhoneNumberCommand => new DelegateCommand(() =>
         {
             Phones.Add(9393806425);
         });
@@ -163,7 +163,7 @@ namespace ProposalSender.WPF_ASP.ViewModels
         /// <summary>
         /// Download command from excel file
         /// </summary>
-        public ICommand LoadingFromFile => new DelegateCommand(() =>
+        public ICommand LoadingFromFileCommand => new DelegateCommand(() =>
         {
             var openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Exel|*.xlsx";
@@ -247,10 +247,5 @@ namespace ProposalSender.WPF_ASP.ViewModels
                 return false;
         }
         #endregion
-
-        public async Task Method()
-        {
-            
-        }
     } 
 }
