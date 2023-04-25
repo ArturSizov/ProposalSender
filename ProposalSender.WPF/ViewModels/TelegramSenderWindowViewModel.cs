@@ -9,8 +9,6 @@ using Prism.Mvvm;
 using System.Collections.ObjectModel;
 using Microsoft.Win32;
 using System;
-using ProposalSender.Contracts.Implementations;
-using WTelegram;
 
 namespace ProposalSender.WPF.ViewModels
 {
@@ -22,9 +20,9 @@ namespace ProposalSender.WPF.ViewModels
         private Visibility verificationView = Visibility.Collapsed;
         private string message = "Введите текст сообщения...";
         private string loginInfo = string.Empty;
-        private string verificationValue;
-        private string status;
-        private string infoMessage;
+        private string? verificationValue;
+        private string? status;
+        private string? infoMessage;
         private bool isEnabled = false;
         private ObservableCollection<long> phones = new();
         private bool installationStatusApp;
@@ -36,10 +34,10 @@ namespace ProposalSender.WPF.ViewModels
         public ObservableCollection<long> Phones { get => phones; set => SetProperty(ref phones, value); }
         public UserSender User { get; set; } = new();
         public string Message { get => message; set => SetProperty(ref message, value); }
-        public string VerificationValue { get => verificationValue; set => SetProperty(ref verificationValue, value); }
+        public string VerificationValue { get => verificationValue!; set => SetProperty(ref verificationValue, value); }
         public string LoginInfo { get => loginInfo; set => SetProperty(ref loginInfo, value); }
-        public string Status { get => status; set => SetProperty(ref status, value); }
-        public string InfoMessage { get => infoMessage; set => SetProperty(ref infoMessage, value); }
+        public string Status { get => status!; set => SetProperty(ref status, value); }
+        public string InfoMessage { get => infoMessage!; set => SetProperty(ref infoMessage, value); }
         public bool IsEnabled { get => isEnabled; set => SetProperty(ref isEnabled, value); }
         public Visibility VerificationView { get => verificationView; set => SetProperty(ref verificationView, value); }
         public bool InstallationStatusApp { get => installationStatusApp; set => SetProperty(ref installationStatusApp, value); }
@@ -64,28 +62,28 @@ namespace ProposalSender.WPF.ViewModels
         /// <summary>
         /// Connect command
         /// </summary>
-        public ICommand Connect => new DelegateCommand<string>(async(str) =>
+        public ICommand ConnectCommandAsync => new DelegateCommand<string>(async(str) =>
         {
-            var result = await send.Connect(User, $"+7{User.PhoneNumber}");
-            SetProperties((result.TaskIsEnabled, result.TaskLoginnInfo, result.TaskInfoMessage, result.TaskStatus));
+            var result = await send.ConnectAsync(User, $"+7{User.PhoneNumber}");
+            SetProperties((result.isEnabled, result.loginInfo, result.infoMessage, result.status));
             SaveProperties();
         });
 
         /// <summary>
         /// Disconnect command
         /// </summary>
-        public ICommand Disconnect => new DelegateCommand(() =>
+        public ICommand DisconnectCommandAsync => new DelegateCommand(async () =>
         {
-            var result = send.Disconnect();
+            var result = await send.DisconnectAsync();
             Phones.Clear();
             Message = "Введите текст сообщения...";
             SelectedIndex = 0;
-            SetProperties((result.Enabled, string.Empty, string.Empty, result.Status));
+            SetProperties((result.enabled, string.Empty, string.Empty, result.status));
         });
         /// <summary>
         /// Open link in browser command
         /// </summary>
-        public ICommand OpenLink => new DelegateCommand(() =>
+        public ICommand OpenLinkCommand => new DelegateCommand(() =>
         {
             OpenUrl("https://my.telegram.org/auth?to=apps");
         });
@@ -93,18 +91,18 @@ namespace ProposalSender.WPF.ViewModels
         /// <summary>
         /// Connect to Telegramm command
         /// </summary>
-        public ICommand SendCode => new DelegateCommand<string>(async(str) =>
+        public ICommand SendCodeCommandAsync => new DelegateCommand<string>(async(str) =>
         {
-            var result = await send.Connect(User, VerificationValue);
+            var result = await send.ConnectAsync(User, VerificationValue);
             VerificationValue = string.Empty;
-            SetProperties((result.TaskIsEnabled, result.TaskLoginnInfo, result.TaskInfoMessage, result.TaskStatus));
+            SetProperties((result.isEnabled, result.loginInfo, result.infoMessage, result.status));
 
         },(str)=> !string.IsNullOrWhiteSpace(str));
 
         /// <summary>
         /// Send Message command
         /// </summary>
-        public ICommand SendMessage => new DelegateCommand(async() =>
+        public ICommand SendMessageCommandAsync => new DelegateCommand(async() =>
         {
             if (PingInternet())
             {
@@ -113,15 +111,15 @@ namespace ProposalSender.WPF.ViewModels
 
                 foreach (var phone in Phones)
                 {
-                    var result = await send.SendMessage(phone, Message);
+                    var result = await send.SendMessageAsync(phone, Message);
 
-                    if (result.TaskErrorMessage != string.Empty)
+                    if (result.errorMessage != string.Empty)
                     {
-                        MessageBox.Show(result.TaskErrorMessage, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(result.errorMessage, "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
 
-                    if (result.TaskIsSend)
+                    if (result.isSend)
                         countSent++;
                     else
                         countUnsent++;
@@ -130,7 +128,7 @@ namespace ProposalSender.WPF.ViewModels
             }
             else
             {
-                send.Disconnect();
+                await send.DisconnectAsync();
                 MessageBox.Show("Нет подключения к Интернету", "Telegram", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         });
@@ -138,7 +136,7 @@ namespace ProposalSender.WPF.ViewModels
         /// <summary>
         /// Delete one phone number command
         /// </summary>
-        public ICommand DeleteOnePhone => new DelegateCommand<object>((obj) =>
+        public ICommand DeleteOnePhoneCommand => new DelegateCommand<object>((obj) =>
         {
             Phones.Remove((long)obj); 
             RaisePropertyChanged(nameof(Phones));
@@ -147,7 +145,7 @@ namespace ProposalSender.WPF.ViewModels
         /// <summary>
         /// Delete all phone numbers command
         /// </summary>
-        public ICommand DeletAllPhones => new DelegateCommand(() =>
+        public ICommand DeletAllPhonesCommand => new DelegateCommand(() =>
         {   
             Phones.Clear();
             RaisePropertyChanged(nameof(Phones));
@@ -156,7 +154,7 @@ namespace ProposalSender.WPF.ViewModels
         /// <summary>
         /// Add one phone number command
         /// </summary>
-        public ICommand AddOnePhoneNumber => new DelegateCommand(()=>
+        public ICommand AddOnePhoneNumberCommand => new DelegateCommand(()=>
         {
             Phones.Add(9393806425);
         });
@@ -164,7 +162,7 @@ namespace ProposalSender.WPF.ViewModels
         /// <summary>
         /// Download command from excel file
         /// </summary>
-        public ICommand LoadingFromFile => new DelegateCommand(() =>
+        public ICommand LoadingFromFileCommand => new DelegateCommand(() =>
         {
             var openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "Exel|*.xlsx";
@@ -228,7 +226,7 @@ namespace ProposalSender.WPF.ViewModels
             if (InfoMessage != null && InfoMessage != string.Empty)
             {
                 MessageBox.Show(InfoMessage, "Telegram", MessageBoxButton.OK, mesImage);
-                InfoMessage = null;
+                InfoMessage = string.Empty;
             }
         }
         private void SaveProperties()

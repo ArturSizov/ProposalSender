@@ -1,11 +1,10 @@
-﻿<Application x:Class="ProposalSender.WPF.App"
+﻿<prism:PrismApplication x:Class="ProposalSender.WPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ProposalSender.WPF.Views.Locator"
              xmlns:properties="clr-namespace:ProposalSender.WPF.Properties"
-             StartupUri="Views/TelegramSenderWindow.xaml">
+             xmlns:prism="http://prismlibrary.com/">
+    
     <Application.Resources>
-        <local:ViewModelLocator x:Key="Locator"/>
         <properties:Settings x:Key="Settings" />
     </Application.Resources>
-</Application>
+</prism:PrismApplication>
