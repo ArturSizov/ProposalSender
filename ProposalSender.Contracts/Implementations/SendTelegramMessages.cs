@@ -36,13 +36,13 @@ namespace ProposalSender.Contracts.Implementations
                 infoMessage = result.infoMessage;
                 loginInfo = result.loginInfo;
 
-                return (isEnabled, infoMessage, loginInfo, status);
+                return (isEnabled, loginInfo, infoMessage, status);
             }
-            catch
+            catch(Exception ex)
             {
                 isEnabled = false;
-                infoMessage = "Не верный API HASH";
-                return (isEnabled, infoMessage, loginInfo, status);
+                infoMessage = ex.Message;
+                return (isEnabled, loginInfo, infoMessage, status);
             }
         }
 
@@ -94,7 +94,6 @@ namespace ProposalSender.Contracts.Implementations
 
         private async Task<(bool isEnabled, string loginInfo, string infoMessage, string status)> DoLoginAsync(string loginInfo)
         {
-            string loginnInfo = string.Empty;
             string infoMessage = string.Empty;
             string status = string.Empty;
             bool isEnabled = true;
@@ -107,20 +106,20 @@ namespace ProposalSender.Contracts.Implementations
                     switch (what)
                     {
                         case "verification_code":
-                            loginnInfo =  "Код верификации:";
+                            loginInfo =  "Код верификации:";
                             break;
                         case "password":
-                            loginnInfo = "Пароль аккаунта:";
+                            loginInfo = "Пароль аккаунта:";
                             break;
                         default:
-                            loginnInfo = string.Empty;
+                            loginInfo = string.Empty;
                             break;
                     }
                 }
                 else
                 {
-                    infoMessage = string.Empty;
                     status = $"Подключено как {client.User}";
+                    loginInfo = string.Empty;
                     isEnabled = true;
                 }
             }
@@ -137,9 +136,11 @@ namespace ProposalSender.Contracts.Implementations
                     "PHONE_NUMBER_BANNED" => "Номер телефона заблокирован",
                     _ => ex.Message,
                 };
+                loginInfo = string.Empty;
+                isEnabled = false;
                 await DisconnectAsync();
             }
-            return (isEnabled, infoMessage, loginnInfo, status);
+            return (isEnabled, loginInfo, infoMessage, status);
         }
         #endregion
 

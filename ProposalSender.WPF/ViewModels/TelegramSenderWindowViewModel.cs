@@ -240,7 +240,7 @@ namespace ProposalSender.WPF.ViewModels
         {
             bool bb = System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable();
 
-            if (bb == true)
+            if (bb)
                return true;
             else
                 return false;
